@@ -2,7 +2,18 @@
 
 Express + TypeScript + Prisma REST API.
 
-## 🚀 Quick Start
+## Stack
+
+- **Runtime:** Node.js 22
+- **Language:** TypeScript 5.9
+- **Framework:** Express 5
+- **ORM:** Prisma 6
+- **Database:** PostgreSQL 17
+- **Security:** Helmet, CORS
+- **Logging:** Morgan
+- **Dev Tools:** tsx, nodemon, Vitest
+
+## Quick Start
 
 ### With Docker (Recommended)
 
@@ -29,58 +40,24 @@ npx prisma migrate dev
 # Start dev server
 npm run dev
 ```
+## Scripts
 
-## 📝 Scripts
+| Action | Command |
+|--------|---------|
+| **Development server with hot reload** | `npm run dev` |
+| **Compile TypeScript to JavaScript** | `npm run build` |
+| **Start production server** | `npm run start` |
+| **Start with NODE_ENV=development** | `npm run start:dev` |
+| **Start with NODE_ENV=production** | `npm run start:prod` |
+| **Generate Prisma Client** | `npm run prisma:generate` |
+| **Create and apply migration** | `npm run prisma:migrate` |
+| **Apply pending migrations** | `npm run prisma:migrate:deploy` |
+| **Open Prisma Studio GUI** | `npm run prisma:studio` |
+| **Run tests with Vitest** | `npm run test` |
+| **Run tests with UI** | `npm run test:ui` |
+| **Type-check with TypeScript** | `npm run lint` |
 
-```bash
-npm run dev              # Development server with hot reload
-npm run build            # Compile TypeScript to JavaScript
-npm run start            # Start production server
-npm run start:dev        # Start with NODE_ENV=development
-npm run start:prod       # Start with NODE_ENV=production
-npm run prisma:generate  # Generate Prisma Client
-npm run prisma:migrate   # Create and apply migration
-npm run prisma:migrate:deploy  # Apply pending migrations
-npm run prisma:studio    # Open Prisma Studio GUI
-npm run test             # Run tests with Vitest
-npm run test:ui          # Run tests with UI
-npm run lint             # Type-check with TypeScript
-```
-
-## 🛠️ Tech Stack
-
-- **Runtime:** Node.js 22
-- **Language:** TypeScript 5.9
-- **Framework:** Express 5
-- **ORM:** Prisma 6
-- **Database:** PostgreSQL 17
-- **Security:** Helmet, CORS
-- **Logging:** Morgan
-- **Dev Tools:** tsx, nodemon, Vitest
-
-## 📁 Project Structure
-
-```
-backend/
-├── src/
-│   ├── index.ts         # Main entry point
-│   ├── config.ts        # Environment configuration
-│   ├── routes/          # API routes (add here)
-│   ├── controllers/     # Route controllers (add here)
-│   ├── services/        # Business logic (add here)
-│   └── middleware/      # Custom middleware (add here)
-├── prisma/
-│   └── schema.prisma    # Database schema
-├── generated/           # Prisma Client (generated)
-├── dist/                # Compiled JavaScript (generated)
-├── .env.example         # Environment template
-├── .env.development     # Development config
-├── .env.local           # Local config (no Docker)
-├── .env.production      # Production config
-└── Dockerfile           # Multi-stage Docker build
-```
-
-## 🔐 Environment Variables
+## Environment Variables
 
 See `.env.example` for all available variables.
 
@@ -94,7 +71,7 @@ See `.env.example` for all available variables.
 - `CORS_ORIGIN` (default: http://localhost:5173)
 - `LOG_LEVEL` (default: info)
 
-## 🗄️ Database
+## Database
 
 ### Prisma Commands
 
@@ -125,7 +102,7 @@ npx prisma format
 
 Located in `prisma/schema.prisma`. The Prisma Client is generated to `generated/prisma`.
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### Health Check
 ```
@@ -171,14 +148,14 @@ Response:
 }
 ```
 
-## 🔒 Security Features
+## Security Features
 
 - **Helmet:** Secure HTTP headers
 - **CORS:** Configurable cross-origin requests
 - **Rate Limiting:** Configurable request limits
 - **Environment Validation:** Required variables checked on startup
 
-## 🐳 Docker
+## Docker
 
 ### Development
 
@@ -200,7 +177,7 @@ docker build --target production -t bobs-corn-api:prod .
 docker run -p 5000:5000 --env-file .env.production bobs-corn-api:prod
 ```
 
-## 🧪 Testing
+## Testing
 
 ```bash
 # Run all tests
@@ -213,7 +190,7 @@ npm run test:ui
 npm run test -- --watch
 ```
 
-## 📊 Logging
+## Logging
 
 Morgan logger with different formats per environment:
 - **Development:** `dev` format (colored, concise)
@@ -221,7 +198,7 @@ Morgan logger with different formats per environment:
 
 Configure with `LOG_LEVEL` and `LOG_FORMAT` environment variables.
 
-## 🚀 Production Deployment
+## Production Deployment
 
 1. Set environment variables in `.env.production`
 2. Generate secure secrets:
@@ -246,7 +223,7 @@ Or use Docker:
 docker-compose -f docker-compose.prod.yml up -d backend
 ```
 
-## 🐛 Debugging
+## Debugging
 
 ### Enable Debug Logging
 
@@ -275,7 +252,7 @@ docker-compose exec backend sh
 docker-compose exec backend env
 ```
 
-## 📝 Adding New Features
+## Adding New Features
 
 ### 1. Add Route
 
@@ -315,14 +292,110 @@ Then run:
 npx prisma migrate dev --name add_example_model
 ```
 
-## 🤝 Contributing
+---
 
-1. Follow TypeScript best practices
-2. Use Prisma for database operations
-3. Add proper error handling
-4. Write tests for new features
-5. Update documentation
+## Usar Base de Datos Personalizada
 
-## 📄 License
+Si quieres conectarte a tu propia base de datos PostgreSQL en lugar de usar el contenedor de Docker, sigue estos pasos:
 
-ISC
+### 1. Obtener Connection String
+
+El formato del connection string de PostgreSQL es:
+
+```
+postgresql://[usuario]:[contraseña]@[host]:[puerto]/[nombre_db]?[opciones]
+```
+
+Ejemplos:
+
+```bash
+# Base de datos local
+postgresql://myuser:mypassword@localhost:5432/mydb
+
+# Base de datos remota
+postgresql://admin:secret@db.example.com:5432/production_db
+
+# Con SSL (recomendado para producción)
+postgresql://user:pass@host:5432/db?sslmode=require
+
+# Azure Database for PostgreSQL
+postgresql://user@server:pass@server.postgres.database.azure.com:5432/db?sslmode=require
+
+# AWS RDS
+postgresql://user:pass@mydb.abc123.us-east-1.rds.amazonaws.com:5432/mydb?sslmode=require
+```
+
+### 2. Actualizar Variables de Entorno
+
+Abre el archivo de entorno que estés usando:
+
+- `.env.local` - Desarrollo sin Docker
+- `.env.development` - Desarrollo con Docker
+- `.env.production` - Producción
+
+Reemplaza la variable `DATABASE_URL`:
+
+```bash
+# Antes (Docker)
+DATABASE_URL="postgresql://postgres:postgres@postgres:5432/bobs_corn"
+
+# Después (base de datos personalizada)
+DATABASE_URL="postgresql://tu_usuario:tu_password@tu_host:5432/tu_database"
+```
+
+### 3. Configurar SSL/TLS (Opcional)
+
+Para conexiones seguras, agrega parámetros SSL al connection string:
+
+```bash
+# Require SSL
+DATABASE_URL="postgresql://user:pass@host:5432/db?sslmode=require"
+
+# Verificar certificado completo
+DATABASE_URL="postgresql://user:pass@host:5432/db?sslmode=verify-full&sslrootcert=/path/to/ca.pem"
+```
+
+### 4. Verificar Conexión
+
+Prueba la conexión antes de ejecutar migraciones:
+
+```bash
+# Test de conexión
+npx prisma db pull
+
+# Si funciona, aplica tus migraciones
+npx prisma migrate deploy
+```
+
+### 5. Consideraciones Importantes
+
+- **Firewall**: Asegúrate de que tu base de datos permita conexiones desde tu IP
+- **Credenciales**: Nunca commitees archivos `.env` con credenciales reales al repositorio
+- **SSL**: Siempre usa SSL en producción (`sslmode=require` como mínimo)
+- **Permisos**: El usuario de la base de datos necesita permisos para crear/modificar tablas
+- **Timeout**: Algunas bases de datos remotas pueden necesitar timeout más largo en `config.ts`
+
+### 6. Ejemplo Completo
+
+Para conectarte a una base de datos de Azure:
+
+1. Crea la base de datos en Azure Portal
+2. Obtén el connection string desde Azure
+3. Actualiza `.env.production`:
+
+```bash
+DATABASE_URL="postgresql://admin@myserver:MyP@ssw0rd@myserver.postgres.database.azure.com:5432/bobs_corn?sslmode=require"
+```
+
+4. Ejecuta las migraciones:
+
+```bash
+npx prisma migrate deploy
+npx prisma generate
+```
+
+5. Inicia el servidor:
+
+```bash
+npm start
+```

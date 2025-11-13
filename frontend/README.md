@@ -1,73 +1,219 @@
-# React + TypeScript + Vite
+# Bob's Corn Frontend 🌽
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+React + TypeScript + Vite application.
 
-Currently, two official plugins are available:
+## Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Runtime:** Node.js 22
+- **Language:** TypeScript 5.6
+- **Framework:** React 19
+- **Build Tool:** Vite 7
+- **Linter:** ESLint
+- **Dev Tools:** Vite Dev Server, Hot Module Replacement
 
-## React Compiler
+## Quick Start
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### With Docker (Recommended)
 
-## Expanding the ESLint configuration
+```bash
+# From project root
+docker-compose up frontend
+```
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Copy environment file
+cp .env.example .env.development
+
+# Start dev server
+npm run dev
+```
+
+## Scripts
+
+| Action | Command |
+|--------|---------|
+| **Development server with hot reload** | `npm run dev` |
+| **Build for production** | `npm run build` |
+| **Preview production build** | `npm run preview` |
+| **Lint with ESLint** | `npm run lint` |
+
+## Environment Variables
+
+See `.env.example` for all available variables.
+
+**Required:**
+- `VITE_API_URL` - Backend API URL
+
+**Available environments:**
+- `.env.development` - Development mode
+- `.env.production` - Production build
+
+All environment variables must be prefixed with `VITE_` to be accessible in the code.
+
+
+## API Connection
+
+The frontend connects to the backend using the `VITE_API_URL` environment variable:
+
+```typescript
+// src/config.ts
+export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+// Usage in components
+fetch(`${API_URL}/api/example`)
+  .then(res => res.json())
+  .then(data => console.log(data));
+```
+
+## Docker
+
+### Development
+
+```bash
+# Build
+docker build --target development -t bobs-corn-frontend:dev .
+
+# Run
+docker run -p 5173:5173 --env-file .env.development bobs-corn-frontend:dev
+```
+
+The development container includes:
+- Hot reload via mounted volumes
+- Vite dev server
+- Port 5173 exposed
+
+### Production
+
+```bash
+# Build
+docker build --target production -t bobs-corn-frontend:prod .
+
+# Run
+docker run -p 80:80 bobs-corn-frontend:prod
+```
+
+The production container:
+- Multi-stage optimized build
+- Static files served by nginx
+- Lightweight nginx:alpine base image
+
+## Production Deployment
+
+1. Set environment variables in `.env.production`:
+   ```bash
+   VITE_API_URL=https://api.example.com
+   ```
+
+2. Build the application:
+   ```bash
+   npm run build
+   ```
+
+3. The compiled files will be in `/dist` and can be served by any static server
+
+Or use Docker:
+```bash
+docker-compose -f docker-compose.prod.yml up -d frontend
+```
+
+## Build Configuration
+
+Build settings in `vite.config.ts`:
+
+- Automatic minification
+- Code splitting
+- Asset optimization
+- Source maps for debugging
+
+## ESLint Configuration
+
+The project uses the recommended ESLint configuration for React + TypeScript.
+
+To enable stricter type-aware rules:
 
 ```js
+// eslint.config.js
+import tseslint from 'typescript-eslint'
+
 export default defineConfig([
-  globalIgnores(['dist']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
       tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
+      // Or for stricter rules:
+      // tseslint.configs.strictTypeChecked,
     ],
     languageOptions: {
       parserOptions: {
         project: ['./tsconfig.node.json', './tsconfig.app.json'],
         tsconfigRootDir: import.meta.dirname,
       },
-      // other options...
     },
   },
 ])
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Adding New Features
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### 1. Create Component
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```tsx
+// src/components/Example.tsx
+interface ExampleProps {
+  title: string;
+}
+
+export const Example = ({ title }: ExampleProps) => {
+  return <div>{title}</div>;
+};
+```
+
+### 2. Use in App
+
+```tsx
+import { Example } from './components/Example';
+
+function App() {
+  return <Example title="Hello" />;
+}
+```
+
+### 3. Add Styles
+
+```css
+/* src/components/Example.css */
+.example {
+  padding: 1rem;
+}
+```
+
+## Debugging
+
+### Enable Debug Mode
+
+Check browser console for errors and warnings.
+
+### Vite Dev Server
+
+The dev server runs on `http://localhost:5173` with:
+- Hot Module Replacement (HMR)
+- Fast refresh for React components
+- Instant server start
+
+### Docker Logs
+
+```bash
+# View logs
+docker-compose logs frontend -f
+
+# Access container
+docker-compose exec frontend sh
+
+# Check environment
+docker-compose exec frontend env
 ```

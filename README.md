@@ -1,43 +1,6 @@
 # Bob's Corn 🌽
 
-Aplicación full-stack moderna con backend en Express + TypeScript + Prisma y frontend en React + Vite, lista para desarrollo y producción con Docker.
-
-## Quick Start
-
-### Con Docker (Recomendado)
-
-```bash
-# Copiar variables de entorno
-cp backend/.env.example backend/.env.development
-cp frontend/.env.example frontend/.env.development
-
-# Levantar todo
-docker-compose up
-```
-
-**URLs:**
-- Frontend: http://localhost:5173
-- Backend API: http://localhost:5000/api
-- PostgreSQL: localhost:5432
-
-### Sin Docker
-
-```bash
-# Solo PostgreSQL en Docker
-docker-compose up -d postgres
-
-# Backend
-cd backend
-cp .env.local .env
-npm install
-npx prisma migrate dev
-npm run dev
-
-# Frontend (nueva terminal)
-cd frontend
-npm install
-npm run dev
-```
+Modern full-stack application with Express + TypeScript + Prisma backend and React + Vite frontend, ready for development and production with Docker.
 
 ## Stack
 
@@ -45,29 +8,69 @@ npm run dev
 **Frontend:** React 19, TypeScript, Vite 7  
 **DevOps:** Docker, Docker Compose, Hot reload
 
-## Comandos Docker
+## Quick Start
 
-| Acción | Comando |
+### Without Docker
+
+ - **DB**
+```bash
+docker-compose up -d postgres
+```
+
+ - **Backend**
+```bash
+cd backend
+cp .env.local .env
+npm install
+npx prisma migrate dev
+npm run dev
+```
+
+ - **Frontend**
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+---
+
+### With Docker (Recommended)
+
+ - **Copy environment variables**
+```bash
+cp backend/.env.example backend/.env.development
+cp frontend/.env.example frontend/.env.development
+```
+
+ - **Start everything**
+```bash
+docker-compose up
+```
+
+## Docker Commands
+
+| Action | Command |
 |--------|---------|
-| **Levantar todo** | `docker-compose up` |
-| **Levantar en background** | `docker-compose up -d` |
+| **Start everything** | `docker-compose up` |
+| **Start in background** | `docker-compose up -d` |
 | **Rebuild** | `docker-compose up --build` |
-| **Ver logs** | `docker-compose logs -f` |
-| **Detener** | `docker-compose down` |
-| **Solo backend** | `docker-compose up backend` |
-| **Solo frontend** | `docker-compose up frontend` |
-| **Solo base de datos** | `docker-compose up -d postgres` |
+| **View logs** | `docker-compose logs -f` |
+| **Stop** | `docker-compose down` |
+| **Backend only** | `docker-compose up backend` |
+| **Frontend only** | `docker-compose up frontend` |
+| **Database only** | `docker-compose up -d postgres` |
 
-## 🗄️ Base de Datos (Prisma)
+## Database (Prisma)
 
-| Acción | Comando |
+| Action | Command |
 |--------|---------|
-| **Generar cliente** | `docker-compose exec backend npx prisma generate` |
-| **Migración** | `docker-compose exec backend npx prisma migrate dev` |
+| **Generate client** | `docker-compose exec backend npx prisma generate` |
+| **Migration** | `docker-compose exec backend npx prisma migrate dev` |
 | **Prisma Studio** | `docker-compose exec backend npx prisma studio` |
 | **PostgreSQL CLI** | `docker-compose exec postgres psql -U postgres -d bobs_corn` |
 
-## Variables de Entorno
+## Environment Variables
 
 **Backend (.env.development):**
 ```env
@@ -83,19 +86,19 @@ VITE_API_URL=http://localhost:5000/api
 
 ## Troubleshooting
 
-**Error de conexión a BD:**
+**Database connection error:**
 ```bash
 docker-compose logs postgres
 docker-compose restart backend
 ```
 
-**Hot reload no funciona:**
+**Hot reload not working:**
 ```bash
 docker-compose down
 docker-compose up --build
 ```
 
-**Limpiar todo:**
+**Clean everything:**
 ```bash
 docker-compose down -v
 docker-compose up --build
