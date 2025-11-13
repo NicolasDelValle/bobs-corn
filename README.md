@@ -1,8 +1,8 @@
 # Bob's Corn 🌽
 
-Full-stack application with Express + TypeScript + Prisma backend and React + Vite frontend.
+Aplicación full-stack moderna con backend en Express + TypeScript + Prisma y frontend en React + Vite, lista para desarrollo y producción con Docker.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Con Docker (Recomendado)
 
@@ -39,13 +39,13 @@ npm install
 npm run dev
 ```
 
-## 🛠️ Tech Stack
+## Stack
 
 **Backend:** Node.js 22, TypeScript, Express 5, Prisma, PostgreSQL 17  
 **Frontend:** React 19, TypeScript, Vite 7  
 **DevOps:** Docker, Docker Compose, Hot reload
 
-## 📝 Comandos Docker
+## Comandos Docker
 
 | Acción | Comando |
 |--------|---------|
@@ -67,7 +67,7 @@ npm run dev
 | **Prisma Studio** | `docker-compose exec backend npx prisma studio` |
 | **PostgreSQL CLI** | `docker-compose exec postgres psql -U postgres -d bobs_corn` |
 
-## 🔐 Variables de Entorno
+## Variables de Entorno
 
 **Backend (.env.development):**
 ```env
@@ -81,7 +81,7 @@ CORS_ORIGIN=http://localhost:5173
 VITE_API_URL=http://localhost:5000/api
 ```
 
-## 🐛 Troubleshooting
+## Troubleshooting
 
 **Error de conexión a BD:**
 ```bash
@@ -100,11 +100,3 @@ docker-compose up --build
 docker-compose down -v
 docker-compose up --build
 ```
-
-## 📖 Más Información
-
-- [Backend README](./backend/README.md) - Documentación completa del API
-
----
-
-Made with ❤️ and 🌽
