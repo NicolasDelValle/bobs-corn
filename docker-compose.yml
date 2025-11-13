@@ -1,0 +1,80 @@
+version: '3.9'
+
+services:
+  # PostgreSQL 17
+  postgres:
+    image: postgres:17-alpine
+    container_name: bobs-corn-db
+    environment:
+      POSTGRES_DB: bobs_corn
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_INITDB_ARGS: "-E UTF8"
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d bobs_corn"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+    networks:
+      - bobs-corn-network
+    restart: unless-stopped
+
+  # Backend (Express + TypeScript + Prisma)
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development
+    container_name: bobs-corn-api
+    env_file:
+      - ./backend/.env.development
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+      - /app/dist
+      - /app/generated
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bobs-corn-network
+    restart: unless-stopped
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run dev"
+
+  # Frontend (Vite + React + TypeScript)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: bobs-corn-web
+    env_file:
+      - ./frontend/.env.development
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - bobs-corn-network
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  bobs-corn-network:
+    driver: bridge
