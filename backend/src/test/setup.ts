@@ -1,5 +1,8 @@
 import { beforeAll, afterAll, beforeEach } from "vitest";
+import { config } from "dotenv";
 import { prisma } from "../lib/db";
+
+config();
 
 beforeAll(async () => {
   process.env.NODE_ENV = "test";
