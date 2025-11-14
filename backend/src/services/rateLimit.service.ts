@@ -1,5 +1,5 @@
 import { prisma } from "../models";
-import type { RateLimitConfig } from "../common/types/rateLimit.types";
+import type { RateLimitConfig } from "../types/rateLimit.types";
 
 let cachedConfig: RateLimitConfig | null = null;
 let lastConfigFetch = 0;

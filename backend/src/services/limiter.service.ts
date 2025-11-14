@@ -2,7 +2,7 @@ import { prisma } from "../models";
 import type {
   RateLimitConfig,
   RateLimitResult,
-} from "../common/types/rateLimit.types";
+} from "../types/rateLimit.types";
 
 export async function checkAndIncrementRateLimit(
   clientId: string,

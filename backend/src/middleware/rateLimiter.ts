@@ -5,4 +5,4 @@ export type {
   RateLimitConfig,
   RateLimitResult,
   RateLimitError,
-} from "../common/types";
+} from "../types";
