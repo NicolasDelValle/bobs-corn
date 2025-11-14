@@ -7,11 +7,12 @@ import { config, validateConfig } from "./config";
 import routes from "./routes";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler";
 import { connectDatabase, disconnectDatabase } from "./models";
+import { startCleanupJobs, stopCleanupJobs } from "./jobs";
 
 try {
   validateConfig();
 } catch (error) {
-  console.error("❌ Configuration validation failed:", error);
+  console.error("Configuration validation failed:", error);
   process.exit(1);
 }
 
@@ -45,17 +46,19 @@ const startServer = async () => {
   try {
     await connectDatabase();
 
+    startCleanupJobs();
+
     app.listen(PORT, () => {
       console.log("");
-      console.log("🚀 ===================================");
-      console.log(`🌽 ${config.app.name} is running!`);
-      console.log("🚀 ===================================");
+      console.log("===================================");
+      console.log(`${config.app.name} is running!`);
+      console.log("===================================");
       console.log(`   Environment: ${config.app.env}`);
       console.log(`   Port: ${PORT}`);
       console.log(`   URL: http://localhost:${PORT}`);
       console.log(`   Health: http://localhost:${PORT}/health`);
       console.log(`   API: http://localhost:${PORT}/api`);
-      console.log("🚀 ===================================");
+      console.log("===================================");
       console.log("");
     });
   } catch (error) {
@@ -67,13 +70,15 @@ const startServer = async () => {
 startServer();
 
 process.on("SIGTERM", async () => {
-  console.log("👋 SIGTERM received, shutting down gracefully...");
+  console.log("SIGTERM received, shutting down gracefully...");
+  stopCleanupJobs();
   await disconnectDatabase();
   process.exit(0);
 });
 
 process.on("SIGINT", async () => {
-  console.log("👋 SIGINT received, shutting down gracefully...");
+  console.log("SIGINT received, shutting down gracefully...");
+  stopCleanupJobs();
   await disconnectDatabase();
   process.exit(0);
 });
