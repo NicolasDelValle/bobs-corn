@@ -41,7 +41,7 @@ describe("Rate Limit Middleware", () => {
       expect(response1.status).toBe(201);
 
       const response2 = await createTestRequest(app)
-        .post("/api/purchasess")
+        .post("/api/purchasesss")
         .set("x-session-id", sessionId)
         .send({
           paymentMethod: { name: "visa", identifier: "4111111111111111" },
