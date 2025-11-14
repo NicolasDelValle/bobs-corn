@@ -1,4 +1,4 @@
-import { prisma } from "../models";
+import { prisma } from "../lib/db";
 import type {
   RateLimitConfig,
   RateLimitResult,

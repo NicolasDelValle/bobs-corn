@@ -15,12 +15,20 @@
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
     "prisma:seed": "tsx prisma/seed.ts",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "test:ui": "vitest --ui",
-    "lint": "tsc --noEmit"
+    "test:coverage": "vitest run --coverage",
+    "lint": "tsc --noEmit",
+    "prepare": "husky"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "lint-staged": {
+    "*.ts": [
+      "tsc --noEmit"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -44,6 +52,8 @@
     "@types/node-cron": "^3.0.11",
     "@types/supertest": "^6.0.3",
     "@vitest/ui": "^4.0.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.6",
     "nodemon": "^3.1.11",
     "prisma": "^6.19.0",
     "supertest": "^7.1.4",

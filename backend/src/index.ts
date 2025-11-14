@@ -3,10 +3,10 @@ import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
-import { config, validateConfig } from "./config";
+import { config, validateConfig } from "./lib/config";
 import routes from "./routes";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler";
-import { connectDatabase, disconnectDatabase } from "./models";
+import { connectDatabase, disconnectDatabase } from "./lib/db";
 import { startCleanupJobs, stopCleanupJobs } from "./jobs";
 
 try {

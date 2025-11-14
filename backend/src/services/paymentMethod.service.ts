@@ -1,5 +1,5 @@
 import { createHash } from "crypto";
-import { prisma } from "../models";
+import { prisma } from "../lib/db";
 import type { PaymentMethod } from "../../generated/prisma/client";
 
 export function hashPaymentIdentifier(identifier: string): string {

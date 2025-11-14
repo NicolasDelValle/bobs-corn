@@ -1,6 +1,6 @@
 import type { Request, Response } from "express";
 import { findOrCreatePaymentMethod } from "../services";
-import { prisma } from "../models";
+import { prisma } from "../lib/db";
 
 export const getAllPaymentMethods = async (req: Request, res: Response) => {
   try {

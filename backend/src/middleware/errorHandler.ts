@@ -1,5 +1,5 @@
 import type { Request, Response, NextFunction } from "express";
-import { config } from "../config";
+import { config } from "../lib/config";
 
 export const notFoundHandler = (_req: Request, res: Response) => {
   res.status(404).json({

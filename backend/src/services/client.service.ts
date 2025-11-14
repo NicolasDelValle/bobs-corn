@@ -1,4 +1,4 @@
-import { prisma } from "../models";
+import { prisma } from "../lib/db";
 import type { Client, PaymentMethod } from "../../generated/prisma/client";
 
 export async function findOrCreateClient(sessionId: string): Promise<Client> {

@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
-import { prisma } from "../models";
+import { prisma } from "../lib/db";
 
-export const getAllPurchases = async (req: Request, res: Response) => {
+export const getPurchases = async (req: Request, res: Response) => {
   try {
     const page = parseInt(req.query.page as string) || 1;
     const limit = parseInt(req.query.limit as string) || 10;

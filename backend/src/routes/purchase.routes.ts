@@ -1,6 +1,6 @@
 import { Router } from "express";
 import {
-  getAllPurchases,
+  getPurchases,
   getPurchaseById,
   createPurchase,
 } from "../controllers/purchase.controller";
@@ -8,7 +8,7 @@ import { rateLimiter } from "../middleware/rateLimiter";
 
 const router = Router();
 
-router.get("/", getAllPurchases);
+router.get("/", getPurchases);
 router.get("/:id", getPurchaseById);
 router.post("/", rateLimiter, createPurchase);
 

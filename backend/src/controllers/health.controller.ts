@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { config } from "../config";
+import { config } from "../lib/config";
 
 export const getHealth = (_req: Request, res: Response) => {
   res.status(200).json({

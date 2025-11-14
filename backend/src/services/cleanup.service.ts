@@ -1,4 +1,4 @@
-import { prisma } from "../models";
+import { prisma } from "../lib/db";
 
 export async function cleanupOldRateLimits(daysToKeep: number = 7) {
   const cutoffDate = new Date(Date.now() - daysToKeep * 24 * 60 * 60 * 1000);
