@@ -69,11 +69,9 @@ export function validateConfig() {
 }
 
 if (config.app.isDevelopment) {
-  console.log("📝 Configuration loaded:");
-  console.log(`   Environment: ${config.app.env}`);
-  console.log(`   Port: ${config.app.port}`);
-  console.log(
-    `   Database: ${config.database.url.replace(/:[^:]*@/, ":***@")}`
-  );
-  console.log(`   CORS Origins: ${config.cors.origin.join(", ")}`);
+  console.log("Configuration loaded:");
+  console.log(`Environment: ${config.app.env}`);
+  console.log(`Port: ${config.app.port}`);
+  console.log(`Database: ${config.database.url.replace(/:[^:]*@/, ":***@")}`);
+  console.log(`CORS Origins: ${config.cors.origin.join(", ")}`);
 }

@@ -36,6 +36,7 @@ services:
       - ./backend/.env.development
     ports:
       - "5000:5000"
+      - "5555:5555"
     volumes:
       - ./backend:/app
       - /app/node_modules
@@ -47,7 +48,7 @@ services:
     networks:
       - bobs-corn-network
     restart: unless-stopped
-    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run dev"
+    command: sh -c "npx prisma generate && npx prisma migrate deploy && npm run prisma:seed && npm run dev"
 
   # Frontend (Vite + React + TypeScript)
   frontend:

@@ -13,3 +13,76 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Config {
+  id          String  @id @default(uuid())
+  key         String  @unique
+  value       String
+  description String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("config")
+}
+
+model Client {
+  id        String @id @default(uuid())
+  sessionId String @unique
+
+  createdAt  DateTime @default(now())
+  lastActive DateTime @updatedAt
+
+  purchases  Purchase[]
+  rateLimits RateLimit[]
+
+  @@index([sessionId])
+  @@map("clients")
+}
+
+model Purchase {
+  id              String   @id @default(uuid())
+  clientId        String
+  paymentMethodId String
+  purchasedAt     DateTime @default(now())
+
+  client        Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  paymentMethod PaymentMethod @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade)
+
+  @@index([clientId, purchasedAt(sort: Desc)])
+  @@index([paymentMethodId])
+  @@map("purchases")
+}
+
+model PaymentMethod {
+  id             String  @id @default(uuid())
+  name           String  @unique
+  identifierHash String  @unique // Hash del número de tarjeta/cuenta para privacidad
+  lastFourDigits String? // Últimos 4 dígitos para referencia (opcional)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  purchases  Purchase[]
+  rateLimits RateLimit[]
+
+  @@index([identifierHash])
+  @@map("payment_methods")
+}
+
+model RateLimit {
+  id              Int      @id @default(autoincrement())
+  clientId        String
+  paymentMethodId String?
+  windowStart     DateTime
+  requestCount    Int      @default(1)
+  createdAt       DateTime @default(now())
+
+  client        Client         @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  paymentMethod PaymentMethod? @relation(fields: [paymentMethodId], references: [id], onDelete: Cascade)
+
+  @@unique([clientId, paymentMethodId, windowStart])
+  @@index([clientId, windowStart(sort: Desc)])
+  @@index([paymentMethodId, windowStart(sort: Desc)])
+  @@map("rate_limits")
+}
