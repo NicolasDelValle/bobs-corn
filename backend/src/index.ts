@@ -1,9 +1,12 @@
-import express, { type Request, type Response } from "express";
+import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
 import cookieParser from "cookie-parser";
 import { config, validateConfig } from "./config";
+import routes from "./routes";
+import { notFoundHandler, errorHandler } from "./middleware/errorHandler";
+import { connectDatabase, disconnectDatabase } from "./models";
 
 try {
   validateConfig();
@@ -31,74 +34,46 @@ if (config.app.isDevelopment) {
   app.use(morgan(config.logging.format));
 }
 
-app.get("/health", (_req: Request, res: Response) => {
-  res.status(200).json({
-    status: "ok",
-    timestamp: new Date().toISOString(),
-    uptime: process.uptime(),
-    environment: config.app.env,
-    version: config.app.version,
-  });
-});
+app.use(routes);
 
-app.get("/api", (_req: Request, res: Response) => {
-  res.json({
-    name: config.app.name,
-    version: config.app.version,
-    environment: config.app.env,
-    message: "Bob's Corn API is running!",
-  });
-});
-
-app.get("/api/hello", (_req: Request, res: Response) => {
-  res.json({
-    message: "Hello from Bob's Corn API!",
-    timestamp: new Date().toISOString(),
-  });
-});
-
-app.use((_req: Request, res: Response) => {
-  res.status(404).json({
-    error: "Not Found",
-    message: "The requested resource does not exist",
-  });
-});
-
-app.use(
-  (err: Error, _req: Request, res: Response, _next: express.NextFunction) => {
-    console.error("Error:", err);
-
-    res.status(500).json({
-      error: "Internal Server Error",
-      message: config.app.isDevelopment
-        ? err.message
-        : "An unexpected error occurred",
-    });
-  }
-);
+app.use(notFoundHandler);
+app.use(errorHandler);
 
 const PORT = config.app.port;
 
-app.listen(PORT, () => {
-  console.log("");
-  console.log("🚀 ===================================");
-  console.log(`🌽 ${config.app.name} is running!`);
-  console.log("🚀 ===================================");
-  console.log(`   Environment: ${config.app.env}`);
-  console.log(`   Port: ${PORT}`);
-  console.log(`   URL: http://localhost:${PORT}`);
-  console.log(`   Health: http://localhost:${PORT}/health`);
-  console.log(`   API: http://localhost:${PORT}/api`);
-  console.log("🚀 ===================================");
-  console.log("");
-});
+const startServer = async () => {
+  try {
+    await connectDatabase();
 
-process.on("SIGTERM", () => {
+    app.listen(PORT, () => {
+      console.log("");
+      console.log("🚀 ===================================");
+      console.log(`🌽 ${config.app.name} is running!`);
+      console.log("🚀 ===================================");
+      console.log(`   Environment: ${config.app.env}`);
+      console.log(`   Port: ${PORT}`);
+      console.log(`   URL: http://localhost:${PORT}`);
+      console.log(`   Health: http://localhost:${PORT}/health`);
+      console.log(`   API: http://localhost:${PORT}/api`);
+      console.log("🚀 ===================================");
+      console.log("");
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
+
+process.on("SIGTERM", async () => {
   console.log("👋 SIGTERM received, shutting down gracefully...");
+  await disconnectDatabase();
   process.exit(0);
 });
 
-process.on("SIGINT", () => {
+process.on("SIGINT", async () => {
   console.log("👋 SIGINT received, shutting down gracefully...");
+  await disconnectDatabase();
   process.exit(0);
 });
