@@ -18,6 +18,11 @@ export const config = {
 
   security: {
     sessionSecret: process.env.SESSION_SECRET || "default-session-secret",
+    jwtSecret: process.env.JWT_SECRET || "default-jwt-secret",
+    jwtRefreshSecret:
+      process.env.JWT_REFRESH_SECRET || "default-refresh-secret",
+    jwtExpiresIn: process.env.JWT_EXPIRES_IN || "1h",
+    jwtRefreshExpiresIn: process.env.JWT_REFRESH_EXPIRES_IN || "7d",
   },
 
   cors: {
@@ -42,7 +47,12 @@ export const config = {
 } as const;
 
 export function validateConfig() {
-  const required = ["DATABASE_URL", "SESSION_SECRET"];
+  const required = [
+    "DATABASE_URL",
+    "SESSION_SECRET",
+    "JWT_SECRET",
+    "JWT_REFRESH_SECRET",
+  ];
 
   const missing = required.filter((key) => !process.env[key]);
 
@@ -56,12 +66,14 @@ export function validateConfig() {
   if (config.app.isProduction) {
     const insecureDefaults = [
       { key: "SESSION_SECRET", value: "default-session-secret" },
+      { key: "JWT_SECRET", value: "default-jwt-secret" },
+      { key: "JWT_REFRESH_SECRET", value: "default-refresh-secret" },
     ];
 
     insecureDefaults.forEach(({ key, value }) => {
       if (process.env[key] === value) {
         console.warn(
-          `⚠️  WARNING: Using insecure default for ${key} in production!`
+          `WARNING: Using insecure default for ${key} in production!`
         );
       }
     });

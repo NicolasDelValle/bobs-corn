@@ -70,7 +70,6 @@ export const getPurchaseById = async (req: Request, res: Response) => {
 
 export const createPurchase = async (req: Request, res: Response) => {
   try {
-    // Client and paymentMethod are attached by rateLimiter middleware
     const client = (req as any).client;
     const paymentMethod = (req as any).paymentMethod;
 

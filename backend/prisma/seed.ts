@@ -1,5 +1,10 @@
+import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "../generated/prisma/client";
 import { createHash } from "crypto";
+import bcrypt from "bcryptjs";
+
+// Load environment variables
+loadEnv();
 
 const prisma = new PrismaClient();
 
@@ -13,8 +18,32 @@ function extractLastFourDigits(identifier: string): string | null {
   return cleaned.slice(-4);
 }
 
+async function hashPassword(password: string): Promise<string> {
+  const saltRounds = 12;
+  return bcrypt.hash(password, saltRounds);
+}
+
 async function main() {
   console.log("Starting seed with test data...\n");
+
+  console.log("Creating default user...");
+
+  // Create default admin user
+  const defaultUser = await prisma.user.upsert({
+    where: {
+      email: "admin@bobscorn.com",
+    },
+    update: {},
+    create: {
+      email: "admin@bobscorn.com",
+      password: await hashPassword("admin123"),
+      name: "Admin User",
+    },
+  });
+
+  console.log(`  ✅ Admin user created: ${defaultUser.email}`);
+  console.log(`  📧 Login: admin@bobscorn.com`);
+  console.log(`  🔑 Password: admin123\n`);
 
   console.log("Seeding configurations...");
 
@@ -34,6 +63,16 @@ async function main() {
       key: "session_max_age_hours",
       value: "24",
       description: "Maximum duration of a client session in hours",
+    },
+    {
+      key: "jwt.access_token_minutes",
+      value: "60",
+      description: "Duración del access token en minutos",
+    },
+    {
+      key: "jwt.refresh_token_days",
+      value: "7",
+      description: "Duración del refresh token en días",
     },
   ];
 

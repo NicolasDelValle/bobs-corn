@@ -8,6 +8,7 @@ import routes from "./routes";
 import { notFoundHandler, errorHandler } from "./middleware/errorHandler";
 import { connectDatabase, disconnectDatabase } from "./lib/db";
 import { startCleanupJobs, stopCleanupJobs } from "./jobs";
+import { ConfigService } from "./services/config.service";
 
 try {
   validateConfig();
@@ -45,6 +46,9 @@ const PORT = config.app.port;
 const startServer = async () => {
   try {
     await connectDatabase();
+
+    // Initialize default configuration
+    await ConfigService.initializeDefaults();
 
     startCleanupJobs();
 
