@@ -29,7 +29,7 @@ model Config {
 model User {
   id       String  @id @default(uuid())
   email    String  @unique
-  password String // Hasheada
+  password String
   name     String?
 
   createdAt DateTime @default(now())
@@ -95,9 +95,9 @@ model Purchase {
 
 model PaymentMethod {
   id             String  @id @default(uuid())
-  name           String // Removed @unique constraint to allow multiple payment methods with same name but different identifiers
-  identifierHash String  @unique // Hash del número de tarjeta/cuenta para privacidad
-  lastFourDigits String? // Últimos 4 dígitos para referencia (opcional)
+  name           String
+  identifierHash String  @unique
+  lastFourDigits String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -113,7 +113,7 @@ model PaymentType {
   id          String  @id @default(uuid())
   name        String  @unique
   displayName String
-  icon        String // Emoji o URL
+  icon        String
   isEnabled   Boolean @default(true)
   order       Int     @default(0)
 

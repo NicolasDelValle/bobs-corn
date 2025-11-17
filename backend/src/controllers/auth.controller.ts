@@ -6,7 +6,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
   try {
     const { email, password } = req.body;
 
-    // Validate input
     if (!email || !password) {
       res.status(400).json({
         error: "Missing credentials",
@@ -15,7 +14,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       res.status(400).json({
@@ -25,7 +23,6 @@ export const login = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    // Attempt login
     const result = await AuthService.login(email.toLowerCase(), password);
 
     if (!result) {

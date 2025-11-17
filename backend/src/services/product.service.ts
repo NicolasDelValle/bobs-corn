@@ -2,9 +2,6 @@ import { prisma } from "../lib/db";
 import type { ProductModel } from "../../generated/prisma/models";
 
 export class ProductService {
-  /**
-   * Obtener todos los productos habilitados
-   */
   static async getAllProducts(): Promise<ProductModel[]> {
     const products = await prisma.product.findMany({
       where: {
@@ -16,9 +13,6 @@ export class ProductService {
     return products;
   }
 
-  /**
-   * Obtener un producto por ID
-   */
   static async getProductById(id: string): Promise<ProductModel | null> {
     const product = await prisma.product.findUnique({
       where: { id },
@@ -27,9 +21,6 @@ export class ProductService {
     return product;
   }
 
-  /**
-   * Actualizar un producto
-   */
   static async updateProduct(
     id: string,
     data: {
@@ -52,9 +43,6 @@ export class ProductService {
     return product;
   }
 
-  /**
-   * Crear un nuevo producto (helper para seeds)
-   */
   static async createProduct(data: {
     name: string;
     description: string;

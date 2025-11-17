@@ -60,7 +60,6 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
       onSubmit={handleSubmit}
       className="space-y-6"
     >
-      {/* Selección de método de pago */}
       <div>
         <h3 className="text-lg font-semibold text-gray-800 mb-4">
           Método de Pago
@@ -85,7 +84,6 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
         </div>
       </div>
 
-      {/* Formulario de tarjeta */}
       {selectedMethod && isCardType(selectedMethod) && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
@@ -133,7 +131,6 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
         </motion.div>
       )}
 
-      {/* Información para otros métodos */}
       {selectedMethod && isDigitalType(selectedMethod) && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
@@ -160,7 +157,6 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
         </motion.div>
       )}
 
-      {/* Botón de compra */}
       <Button
         type="submit"
         disabled={!selectedMethod || isLoading}

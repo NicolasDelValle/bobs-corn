@@ -22,9 +22,6 @@ export interface UpdateProductData {
 }
 
 export class ProductApiService {
-  /**
-   * Obtener todos los productos
-   */
   static async getAllProducts(): Promise<Product[]> {
     try {
       const response = await apiGet<{ success: boolean; data: Product[] }>(
@@ -36,7 +33,7 @@ export class ProductApiService {
       } else {
         throw new Error("Error obteniendo productos");
       }
-    } catch (error) {
+    } catch {
       return [
         {
           id: "1",
@@ -99,19 +96,15 @@ export class ProductApiService {
     id: string,
     data: UpdateProductData
   ): Promise<Product> {
-    try {
-      const response = await apiPut<{ success: boolean; data: Product }>(
-        `/products/${id}`,
-        data
-      );
+    const response = await apiPut<{ success: boolean; data: Product }>(
+      `/products/${id}`,
+      data
+    );
 
-      if (response.success) {
-        return response.data;
-      } else {
-        throw new Error("Error actualizando producto");
-      }
-    } catch (error) {
-      throw error;
+    if (response.success) {
+      return response.data;
+    } else {
+      throw new Error("Error actualizando producto");
     }
   }
 }

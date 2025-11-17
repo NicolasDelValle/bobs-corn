@@ -38,7 +38,6 @@ export const UserStats: React.FC<UserStatsProps> = ({
         </div>
       </div>
 
-      {/* Barra de progreso al siguiente nivel */}
       <div>
         <div className="flex justify-between text-xs text-gray-600 mb-1">
           <span>Progreso al Nivel {stats.level + 1}</span>

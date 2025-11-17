@@ -16,13 +16,11 @@ export interface TokenPair {
 }
 
 export class AuthService {
-  // Hash password
   static async hashPassword(password: string): Promise<string> {
     const saltRounds = 12;
     return bcrypt.hash(password, saltRounds);
   }
 
-  // Verify password
   static async verifyPassword(
     password: string,
     hashedPassword: string
@@ -30,7 +28,6 @@ export class AuthService {
     return bcrypt.compare(password, hashedPassword);
   }
 
-  // Generate tokens
   static generateTokens(payload: JWTPayload): TokenPair {
     const jwtSecret = config.security.jwtSecret;
     const jwtRefreshSecret = config.security.jwtRefreshSecret;
@@ -51,22 +48,18 @@ export class AuthService {
     }
   }
 
-  // Verify access token
   static verifyAccessToken(token: string): JWTPayload {
     return jwt.verify(token, config.security.jwtSecret) as JWTPayload;
   }
 
-  // Verify refresh token
   static verifyRefreshToken(token: string): JWTPayload {
     return jwt.verify(token, config.security.jwtRefreshSecret) as JWTPayload;
   }
 
-  // Login user
   static async login(
     email: string,
     password: string
   ): Promise<{ user: any; tokens: TokenPair } | null> {
-    // Find user
     const user = await prisma.user.findUnique({
       where: { email },
       select: { id: true, email: true, name: true, password: true },
@@ -76,13 +69,11 @@ export class AuthService {
       return null;
     }
 
-    // Verify password
     const isPasswordValid = await this.verifyPassword(password, user.password);
     if (!isPasswordValid) {
       return null;
     }
 
-    // Invalidate all existing sessions for this user (single session per user)
     await prisma.session.updateMany({
       where: {
         userId: user.id,
@@ -91,7 +82,6 @@ export class AuthService {
       data: { isRevoked: true },
     });
 
-    // Create session
     const tokenConfig = await ConfigService.getTokenConfig();
     const expiresAt = new Date(
       Date.now() + tokenConfig.accessTokenExpiry * 60 * 1000
@@ -100,10 +90,9 @@ export class AuthService {
       Date.now() + tokenConfig.refreshTokenExpiry * 24 * 60 * 60 * 1000
     );
 
-    // Generate tokens first with temporary sessionId
     const tempPayload: JWTPayload = {
       userId: user.id,
-      sessionId: "temp", // Will be updated after session creation
+      sessionId: "temp",
       email: user.email,
     };
 
@@ -119,7 +108,6 @@ export class AuthService {
       },
     });
 
-    // Generate final tokens with real sessionId
     const payload: JWTPayload = {
       userId: user.id,
       sessionId: session.id,
@@ -128,7 +116,6 @@ export class AuthService {
 
     const tokens = this.generateTokens(payload);
 
-    // Update session with final tokens
     await prisma.session.update({
       where: { id: session.id },
       data: {
@@ -137,7 +124,6 @@ export class AuthService {
       },
     });
 
-    // Remove password from response
     const { password: _, ...userWithoutPassword } = user;
 
     return {
@@ -146,13 +132,10 @@ export class AuthService {
     };
   }
 
-  // Refresh tokens
   static async refreshTokens(refreshToken: string): Promise<TokenPair | null> {
     try {
-      // Verify refresh token
       const payload = this.verifyRefreshToken(refreshToken);
 
-      // Find session
       const session = await prisma.session.findFirst({
         where: {
           id: payload.sessionId,
@@ -167,7 +150,6 @@ export class AuthService {
         return null;
       }
 
-      // Generate new tokens
       const newPayload: JWTPayload = {
         userId: session.user.id,
         sessionId: session.id,
@@ -176,7 +158,6 @@ export class AuthService {
 
       const newTokens = this.generateTokens(newPayload);
 
-      // Update session
       const tokenConfig = await ConfigService.getTokenConfig();
       const newExpiresAt = new Date(
         Date.now() + tokenConfig.accessTokenExpiry * 60 * 1000
@@ -201,7 +182,6 @@ export class AuthService {
     }
   }
 
-  // Logout
   static async logout(sessionId: string): Promise<void> {
     await prisma.session.update({
       where: { id: sessionId },
@@ -209,7 +189,6 @@ export class AuthService {
     });
   }
 
-  // Validate session
   static async validateSession(
     accessToken: string
   ): Promise<{ user: any; sessionId: string } | null> {
@@ -243,7 +222,6 @@ export class AuthService {
     }
   }
 
-  // Logout all sessions for a user
   static async logoutAllSessions(userId: string): Promise<void> {
     await prisma.session.updateMany({
       where: { userId, isRevoked: false },
@@ -251,7 +229,6 @@ export class AuthService {
     });
   }
 
-  // Clean expired sessions (for cleanup jobs)
   static async cleanExpiredSessions(): Promise<number> {
     const result = await prisma.session.deleteMany({
       where: {

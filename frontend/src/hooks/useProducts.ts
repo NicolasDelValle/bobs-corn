@@ -18,7 +18,6 @@ export const useProducts = (): UseProductsReturn => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Obtener productos
   const fetchProducts = useCallback(async () => {
     try {
       setLoading(true);
@@ -33,24 +32,17 @@ export const useProducts = (): UseProductsReturn => {
     }
   }, []);
 
-  // Actualizar un producto
   const updateProduct = useCallback(
     async (id: string, data: UpdateProductData) => {
-      try {
-        const updatedProduct = await ProductApiService.updateProduct(id, data);
+      const updatedProduct = await ProductApiService.updateProduct(id, data);
 
-        // Actualizar el estado local
-        setProducts((prev) =>
-          prev.map((product) => (product.id === id ? updatedProduct : product))
-        );
-      } catch (err) {
-        throw err;
-      }
+      setProducts((prev) =>
+        prev.map((product) => (product.id === id ? updatedProduct : product))
+      );
     },
     []
   );
 
-  // Cargar productos al montar el componente
   useEffect(() => {
     fetchProducts();
   }, [fetchProducts]);

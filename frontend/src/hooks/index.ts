@@ -3,10 +3,8 @@
  */
 
 import { useState, useEffect, useCallback } from "react";
-// import { apiClient } from "@/services/api";
 import type { ApiError } from "@/types";
 
-// Hook para API calls
 export function useApi<T>(endpoint: string, autoFetch = false) {
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(autoFetch);
@@ -16,9 +14,7 @@ export function useApi<T>(endpoint: string, autoFetch = false) {
     try {
       setLoading(true);
       setError(null);
-      // const response = await apiClient.get<T>(endpoint);
-      // setData(response.data || null);
-      setData(null); // Placeholder until API client is implemented
+      setData(null);
     } catch (err) {
       setError(err as ApiError);
     } finally {
@@ -35,7 +31,6 @@ export function useApi<T>(endpoint: string, autoFetch = false) {
   return { data, loading, error, refetch: fetch };
 }
 
-// Hook para localStorage
 export function useLocalStorage<T>(
   key: string,
   initialValue: T
@@ -44,26 +39,20 @@ export function useLocalStorage<T>(
     try {
       const item = window.localStorage.getItem(key);
       return item ? JSON.parse(item) : initialValue;
-    } catch (error) {
+    } catch {
       return initialValue;
     }
   });
 
   const setValue = (value: T | ((val: T) => T)) => {
-    try {
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      setStoredValue(valueToStore);
-      window.localStorage.setItem(key, JSON.stringify(valueToStore));
-    } catch (error) {
-      // silently fail
-    }
+    const valueToStore = value instanceof Function ? value(storedValue) : value;
+    setStoredValue(valueToStore);
+    window.localStorage.setItem(key, JSON.stringify(valueToStore));
   };
 
   return [storedValue, setValue];
 }
 
-// Hook para debounce
 export function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
 

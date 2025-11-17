@@ -1,7 +1,6 @@
 import type { Request, Response } from "express";
 import { ProductService } from "../services/product.service";
 
-// Schema de validación para actualizar producto
 const updateProductSchema = {
   name: (val: any) =>
     typeof val === "string" && val.length > 0 && val.length <= 255,
@@ -14,10 +13,6 @@ const updateProductSchema = {
 };
 
 export class ProductController {
-  /**
-   * GET /api/products
-   * Obtener todos los productos habilitados
-   */
   static async getAllProducts(req: Request, res: Response) {
     try {
       const products = await ProductService.getAllProducts();
@@ -35,10 +30,6 @@ export class ProductController {
     }
   }
 
-  /**
-   * GET /api/products/:id
-   * Obtener un producto por ID
-   */
   static async getProductById(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -87,7 +78,6 @@ export class ProductController {
         });
       }
 
-      // Validar datos de entrada
       const validData: any = {};
       const errors: string[] = [];
 
@@ -111,7 +101,6 @@ export class ProductController {
         });
       }
 
-      // Verificar si el producto existe
       const existingProduct = await ProductService.getProductById(id);
       if (!existingProduct) {
         return res.status(404).json({
@@ -120,7 +109,6 @@ export class ProductController {
         });
       }
 
-      // Actualizar producto
       const updatedProduct = await ProductService.updateProduct(id, validData);
 
       res.json({

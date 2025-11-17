@@ -3,7 +3,6 @@ import { PrismaClient } from "../generated/prisma/client";
 import { createHash } from "crypto";
 import bcrypt from "bcryptjs";
 
-// Load environment variables
 loadEnv();
 
 const prisma = new PrismaClient();
@@ -28,7 +27,6 @@ async function main() {
 
   console.log("Creating default user...");
 
-  // Create default admin user
   const defaultUser = await prisma.user.upsert({
     where: {
       email: "admin@bobscorn.com",

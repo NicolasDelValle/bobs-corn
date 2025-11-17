@@ -32,7 +32,6 @@ describe("Purchase Endpoints", () => {
       },
     });
 
-    // Create a test product
     const testProduct = await prisma.product.create({
       data: {
         name: "Test Product",

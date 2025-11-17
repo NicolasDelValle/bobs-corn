@@ -31,7 +31,6 @@ export const PurchaseSection: React.FC<PurchaseSectionProps> = ({
   onPurchase,
   selectedProduct,
 }) => {
-  // Usar producto seleccionado o fallback a configuración estática
   const displayProduct = selectedProduct || {
     name: APP_CONFIG.product.name,
     price: APP_CONFIG.product.price,
@@ -89,7 +88,6 @@ export const PurchaseSection: React.FC<PurchaseSectionProps> = ({
         </Accordion>
       </div>
 
-      {/* Estado de espera */}
       {isWaiting && (
         <PurchaseSuccess
           waitingTimeLeft={waitingTimeLeft}

@@ -22,7 +22,6 @@ export const useAuth = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const navigate = useNavigate();
 
-  // Check auth status on mount - solo verificar localStorage
   useEffect(() => {
     const checkAuth = () => {
       setLoading(true);
@@ -68,12 +67,11 @@ export const useAuth = () => {
     try {
       await logoutService();
     } catch {
-      // Ignorar errores del API, simplemente limpiar estado local
+      alert("Error al cerrar sesión. Por favor, intente de nuevo.");
     } finally {
       setUser(null);
       setIsAuthenticated(false);
       setLoading(false);
-      // Redirigir a la página principal después del logout
       navigate("/", { replace: true });
     }
   }, [navigate]);

@@ -26,7 +26,7 @@ export const authMiddleware = async (
       return;
     }
 
-    const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+    const token = authHeader.substring(7);
 
     if (!token) {
       res.status(401).json({
@@ -46,7 +46,6 @@ export const authMiddleware = async (
       return;
     }
 
-    // Attach user and session to request
     (req as AuthenticatedRequest).user = sessionData.user;
     (req as AuthenticatedRequest).sessionId = sessionData.sessionId;
 
@@ -60,7 +59,6 @@ export const authMiddleware = async (
   }
 };
 
-// Optional middleware - doesn't fail if no token
 export const optionalAuthMiddleware = async (
   req: Request,
   res: Response,
@@ -84,7 +82,6 @@ export const optionalAuthMiddleware = async (
 
     next();
   } catch (error) {
-    // Continue without authentication in optional middleware
     next();
   }
 };

@@ -2,7 +2,6 @@ import type { Request, Response } from "express";
 import { CommonService } from "../services/common.service";
 
 export class CommonController {
-  // GET /api/common/purchase-wait-time
   static async getPurchaseWaitTime(req: Request, res: Response) {
     try {
       const waitTime = await CommonService.getPurchaseWaitTime();
@@ -13,7 +12,6 @@ export class CommonController {
     }
   }
 
-  // PUT /api/common/purchase-wait-time
   static async setPurchaseWaitTime(req: Request, res: Response) {
     try {
       const { minutes } = req.body;
@@ -32,7 +30,6 @@ export class CommonController {
     }
   }
 
-  // GET /api/common/payment-types
   static async getPaymentTypes(req: Request, res: Response) {
     try {
       const paymentTypes = await CommonService.getPaymentTypes();
@@ -43,7 +40,6 @@ export class CommonController {
     }
   }
 
-  // POST /api/common/payment-types
   static async createPaymentType(req: Request, res: Response) {
     try {
       const { name, displayName, icon, order } = req.body;
@@ -68,7 +64,6 @@ export class CommonController {
     }
   }
 
-  // PUT /api/common/payment-types/:id
   static async updatePaymentType(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -94,7 +89,6 @@ export class CommonController {
     }
   }
 
-  // DELETE /api/common/payment-types/:id
   static async deletePaymentType(req: Request, res: Response) {
     try {
       const { id } = req.params;
@@ -111,7 +105,6 @@ export class CommonController {
     }
   }
 
-  // POST /api/common/seed-payment-types
   static async seedPaymentTypes(req: Request, res: Response) {
     try {
       await CommonService.seedPaymentTypes();

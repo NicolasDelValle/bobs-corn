@@ -66,7 +66,6 @@ export const useApi = <T>() => {
   };
 };
 
-// Hook específico para registrar compras en el backend
 export const usePurchaseApi = () => {
   const api = useApi<{ success: boolean; message: string }>();
 

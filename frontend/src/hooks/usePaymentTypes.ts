@@ -13,7 +13,7 @@ export const usePaymentTypes = () => {
       setError(null);
       const types = await getPaymentTypes();
       setPaymentTypes(types);
-    } catch (err) {
+    } catch {
       setError("Error al cargar metodos de pago");
       setPaymentTypes([
         {

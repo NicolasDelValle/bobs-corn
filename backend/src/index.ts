@@ -57,17 +57,9 @@ const startServer = async () => {
     startCleanupJobs();
 
     app.listen(PORT, () => {
-      console.log("");
+      console.log(`Backend is running!`);
       console.log("===================================");
-      console.log(`${config.app.name} is running!`);
-      console.log("===================================");
-      console.log(`   Environment: ${config.app.env}`);
-      console.log(`   Port: ${PORT}`);
-      console.log(`   URL: http://localhost:${PORT}`);
-      console.log(`   Health: http://localhost:${PORT}/health`);
-      console.log(`   API: http://localhost:${PORT}/api`);
-      console.log("===================================");
-      console.log("");
+      console.log(`http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error("Failed to start server:", error);

@@ -14,7 +14,6 @@ export const getAllPaymentMethods = async (req: Request, res: Response) => {
         lastFourDigits: true,
         createdAt: true,
         updatedAt: true,
-        // NO exponer identifierHash por seguridad
       },
     });
 
@@ -41,7 +40,6 @@ export const getPaymentMethodById = async (req: Request, res: Response) => {
         lastFourDigits: true,
         createdAt: true,
         updatedAt: true,
-        // NO exponer identifierHash por seguridad
       },
     });
 
@@ -72,7 +70,6 @@ export const createPaymentMethod = async (req: Request, res: Response) => {
       });
     }
 
-    // Usar el servicio que maneja el hash automáticamente
     const paymentMethod = await findOrCreatePaymentMethod(name, identifier);
 
     res.status(201).json({

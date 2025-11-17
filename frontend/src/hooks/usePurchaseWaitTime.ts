@@ -12,7 +12,7 @@ export const usePurchaseWaitTime = () => {
       setError(null);
       const time = await getPurchaseWaitTime();
       setWaitTime(time);
-    } catch (err) {
+    } catch {
       setError("Error al obtener tiempo de esperra");
       setWaitTime(5);
     } finally {

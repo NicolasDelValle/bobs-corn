@@ -1,15 +1,12 @@
 import { prisma } from "../lib/db";
 
 export class CommonService {
-  // Obtener tiempo de espera para próxima compra
   static async getPurchaseWaitTime(): Promise<number> {
     const config = await prisma.config.findUnique({
       where: { key: "rate_limit_window_ms" },
     });
 
-    // Si no existe la configuración, usar 5 minutos por defecto
     if (!config) {
-      // Crear la configuración con valor por defecto (5 minutos = 300000 ms)
       await prisma.config.create({
         data: {
           key: "rate_limit_window_ms",
@@ -17,17 +14,14 @@ export class CommonService {
           description: "Tiempo de espera en milisegundos entre compras",
         },
       });
-      return 5; // 5 minutos
+      return 5;
     }
 
-    // Convertir milisegundos a minutos
     const milliseconds = parseInt(config.value, 10) || 300000;
-    return Math.round(milliseconds / 60000); // convertir ms a minutos
+    return Math.round(milliseconds / 60000);
   }
 
-  // Actualizar tiempo de espera para compras
   static async setPurchaseWaitTime(minutes: number): Promise<void> {
-    // Convertir minutos a milisegundos
     const milliseconds = minutes * 60000;
 
     await prisma.config.upsert({
@@ -41,7 +35,6 @@ export class CommonService {
     });
   }
 
-  // Obtener métodos de pago disponibles
   static async getPaymentTypes() {
     return prisma.paymentType.findMany({
       where: { isEnabled: true },
@@ -49,7 +42,6 @@ export class CommonService {
     });
   }
 
-  // Crear método de pago
   static async createPaymentType(data: {
     name: string;
     displayName: string;
@@ -64,7 +56,6 @@ export class CommonService {
     });
   }
 
-  // Actualizar método de pago
   static async updatePaymentType(
     id: string,
     data: {
@@ -81,14 +72,12 @@ export class CommonService {
     });
   }
 
-  // Eliminar método de pago
   static async deletePaymentType(id: string) {
     return prisma.paymentType.delete({
       where: { id },
     });
   }
 
-  // Seed métodos de pago por defecto
   static async seedPaymentTypes() {
     const existingCount = await prisma.paymentType.count();
     if (existingCount > 0) return;

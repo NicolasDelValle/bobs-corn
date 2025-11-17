@@ -77,7 +77,7 @@ export async function rateLimiter(
 
       res.status(429).json({
         error: "Rate limit exceeded",
-        message: `Too many requests with this payment method. Please try again in ${waitSeconds} seconds.`,
+        message: `Too many requesrs with this payment method. Please try again in ${waitSeconds} seconds.`,
         retryAfter: waitSeconds,
         limit: config.maxRequests,
         windowMs: config.windowMs,

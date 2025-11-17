@@ -97,7 +97,6 @@ export const createPurchase = async (req: Request, res: Response) => {
       });
     }
 
-    // Verificar que el producto existe
     const product = await prisma.product.findUnique({
       where: { id: productId },
     });

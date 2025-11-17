@@ -11,7 +11,6 @@ export const ProductCard: React.FC<ProductCardProps> = ({
   delay = 0.2,
   product
 }) => {
-  // Datos por defecto si no se pasa producto
   const defaultProduct = {
     name: "Choclo Fresco",
     description: "Deliciosos choclos frescos de la granja de Bob",
