@@ -32,8 +32,8 @@ export const PurchaseSection: React.FC<PurchaseSectionProps> = ({
   selectedProduct,
 }) => {
   const displayProduct = selectedProduct || {
-    name: APP_CONFIG.product.name,
-    price: APP_CONFIG.product.price,
+    name: APP_CONFIG.PRODUCT.name,
+    price: APP_CONFIG.PRODUCT.price,
   };
 
   return (
@@ -75,7 +75,7 @@ export const PurchaseSection: React.FC<PurchaseSectionProps> = ({
                   )}
                 </div>
               </div>
-              <div className="text-lg font-bold text-xl text-green-600">
+              <div className="font-bold text-xl text-green-600">
                 ${displayProduct.price.toFixed(2)}
               </div>
             </div>
