@@ -35,7 +35,7 @@ async function main() {
     create: {
       email: "admin@bobscorn.com",
       password: await hashPassword("admin123"),
-      name: "Admin User",
+      name: "Bob",
     },
   });
 

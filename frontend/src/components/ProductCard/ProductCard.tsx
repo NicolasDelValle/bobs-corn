@@ -28,7 +28,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay }}
-      className="bg-white rounded-2xl shadow-lg overflow-hidden"
+      className="bg-white rounded-2xl shadow-lg overflow-hidden h-full flex flex-col"
     >
       <div className="aspect-square bg-gradient-to-br from-yellow-100 to-yellow-200 flex items-center justify-center">
         {displayImage.startsWith('http') ? (
@@ -41,13 +41,15 @@ export const ProductCard: React.FC<ProductCardProps> = ({
           <span className="text-8xl">{displayImage}</span>
         )}
       </div>
-      <div className="p-6">
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">
-          {displayProduct.name}
-        </h2>
-        <p className="text-gray-600 mb-4">
-          {displayProduct.description}
-        </p>
+      <div className="p-6 flex-1 flex flex-col justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">
+            {displayProduct.name}
+          </h2>
+          <p className="text-gray-600 mb-4">
+            {displayProduct.description}
+          </p>
+        </div>
         <div className="flex items-center justify-between">
           <span className="text-3xl font-bold text-green-600">
             ${displayProduct.price.toFixed(2)}

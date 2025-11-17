@@ -41,8 +41,8 @@ export const ProductGrid: React.FC<ProductGridProps> = ({
         <motion.div
           key={product.id}
           className={`cursor-pointer transition-all duration-200 ${selectedProduct === product.id
-              ? 'ring-2 ring-green-500 ring-offset-2'
-              : 'hover:scale-105'
+            ? 'shadow-2xl shadow-green-500 rounded-xl '
+            : 'hover:scale-105'
             }`}
           onClick={() => onProductSelect(product.id)}
           whileHover={{ scale: 1.02 }}
