@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { ChevronDown } from 'lucide-react';
 
 interface AccordionProps {
   isOpen: boolean;
@@ -32,7 +33,7 @@ export const Accordion: React.FC<AccordionProps> = ({
           animate={{ rotate: isOpen ? 180 : 0 }}
           transition={{ duration: 0.2 }}
         >
-          ⬇️
+          <ChevronDown />
         </motion.div>
       </motion.button>
 

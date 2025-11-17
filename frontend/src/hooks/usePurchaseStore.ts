@@ -1,109 +1,169 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { storage, STORAGE_KEYS } from "@/utils/storage";
 import {
-  generateSessionId,
   getCurrentTimestamp,
   calculateRemainingTime,
   hasWaitTimeExpired,
 } from "@/utils/session";
-import { APP_CONFIG } from "@/config/app";
+import {
+  generateAnimalSessionId,
+  generateSessionName,
+} from "@/utils/userGenerator";
+import { usePurchaseWaitTime } from "./usePurchaseWaitTime";
+import { createPurchase } from "@/services/purchaseApiService";
+import type { PaymentType } from "@/types/common.types";
 
 interface PurchaseState {
   sessionId: string;
+  sessionName: string;
+  cornCount: number;
   isWaiting: boolean;
   waitingTimeLeft: number;
   lastPurchaseTime: number | null;
 }
 
 export const usePurchaseStore = () => {
-  const [state, setState] = useState<PurchaseState>(() => {
-    // Inicializar estado desde localStorage
+  const { waitTime } = usePurchaseWaitTime(); // Obtener tiempo de espera dinámico
+
+  // Estado base persistido
+  const [baseState, setBaseState] = useState(() => {
     const sessionId =
-      storage.get<string>(STORAGE_KEYS.SESSION_ID) || generateSessionId();
+      storage.get<string>(STORAGE_KEYS.SESSION_ID) || generateAnimalSessionId();
+    const sessionName =
+      storage.get<string>(STORAGE_KEYS.SESSION_NAME) || generateSessionName();
+    const cornCount = storage.get<number>(STORAGE_KEYS.CORN_COUNT) || 0;
     const lastPurchaseTime = storage.get<number>(STORAGE_KEYS.LAST_PURCHASE);
-
-    let isWaiting = false;
-    let waitingTimeLeft = 0;
-
-    if (lastPurchaseTime) {
-      const hasExpired = hasWaitTimeExpired(
-        lastPurchaseTime,
-        APP_CONFIG.purchaseWaitTime
-      );
-      if (!hasExpired) {
-        isWaiting = true;
-        waitingTimeLeft = calculateRemainingTime(
-          lastPurchaseTime,
-          APP_CONFIG.purchaseWaitTime
-        );
-      }
-    }
 
     return {
       sessionId,
-      isWaiting,
-      waitingTimeLeft,
+      sessionName,
+      cornCount,
       lastPurchaseTime,
     };
   });
 
-  // Guardar sessionId en localStorage al inicializar
+  // Estado para forzar re-renders del countdown
+  const [currentTime, setCurrentTime] = useState(getCurrentTimestamp());
+
+  // Estado calculado reactivamente
+  const state = useMemo((): PurchaseState => {
+    if (!waitTime || !baseState.lastPurchaseTime) {
+      return {
+        ...baseState,
+        isWaiting: false,
+        waitingTimeLeft: 0,
+      };
+    }
+
+    const hasExpired = hasWaitTimeExpired(baseState.lastPurchaseTime, waitTime);
+    if (hasExpired) {
+      // Limpiar asíncronamente para evitar efectos en cascada
+      setTimeout(() => {
+        storage.remove(STORAGE_KEYS.LAST_PURCHASE);
+        setBaseState((prev) => ({
+          ...prev,
+          lastPurchaseTime: null,
+        }));
+      }, 0);
+
+      return {
+        ...baseState,
+        isWaiting: false,
+        waitingTimeLeft: 0,
+      };
+    }
+
+    const remainingTime = calculateRemainingTime(
+      baseState.lastPurchaseTime,
+      waitTime
+    );
+    return {
+      ...baseState,
+      isWaiting: true,
+      waitingTimeLeft: remainingTime,
+    };
+  }, [waitTime, baseState, currentTime]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Guardar datos en localStorage
   useEffect(() => {
     storage.set(STORAGE_KEYS.SESSION_ID, state.sessionId);
-  }, [state.sessionId]);
+    storage.set(STORAGE_KEYS.SESSION_NAME, state.sessionName);
+    storage.set(STORAGE_KEYS.CORN_COUNT, state.cornCount);
+  }, [state.sessionId, state.sessionName, state.cornCount]);
 
   // Countdown timer
   useEffect(() => {
     let interval: number;
 
-    if (state.isWaiting && state.waitingTimeLeft > 0) {
+    if (state.isWaiting) {
       interval = setInterval(() => {
-        setState((prev) => {
-          if (prev.waitingTimeLeft <= 1) {
-            // Tiempo expirado
-            storage.remove(STORAGE_KEYS.LAST_PURCHASE);
-            return {
-              ...prev,
-              isWaiting: false,
-              waitingTimeLeft: 0,
-              lastPurchaseTime: null,
-            };
-          }
-          return {
-            ...prev,
-            waitingTimeLeft: prev.waitingTimeLeft - 1,
-          };
-        });
+        setCurrentTime(getCurrentTimestamp());
       }, 1000);
     }
 
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [state.isWaiting, state.waitingTimeLeft]);
+  }, [state.isWaiting]);
 
   // Registrar una nueva compra
-  const registerPurchase = useCallback(() => {
+  const registerPurchase = useCallback((productId?: string) => {
     const purchaseTime = getCurrentTimestamp();
-    const waitTime = APP_CONFIG.purchaseWaitTime * 60; // convertir a segundos
 
     storage.set(STORAGE_KEYS.LAST_PURCHASE, purchaseTime);
 
-    setState((prev) => ({
-      ...prev,
-      isWaiting: true,
-      waitingTimeLeft: waitTime,
-      lastPurchaseTime: purchaseTime,
-    }));
+    // Guardar el producto comprado si se proporciona
+    if (productId) {
+      storage.set(STORAGE_KEYS.LAST_PURCHASED_PRODUCT, productId);
+    }
+
+    setBaseState((prev) => {
+      const newCornCount = prev.cornCount + 1;
+      storage.set(STORAGE_KEYS.CORN_COUNT, newCornCount);
+
+      return {
+        ...prev,
+        cornCount: newCornCount,
+        lastPurchaseTime: purchaseTime,
+      };
+    });
   }, []);
 
-  // Resetear el tiempo de espera (para testing o admin)
+  // Crear compra real a través de la API
+  const createPurchaseAction = useCallback(
+    async (data: {
+      productId: string;
+      paymentMethod: PaymentType;
+      cardDetails?: {
+        cardNumber: string;
+        expiryDate: string;
+        cvv: string;
+        holderName: string;
+      };
+    }) => {
+      try {
+        // Guardar sessionId en storage para que sea enviado en los headers
+        storage.set(STORAGE_KEYS.SESSION_ID, state.sessionId);
+
+        const response = await createPurchase(data);
+
+        // Si llegamos aquí sin excepción, la compra fue exitosa
+        registerPurchase(data.productId);
+
+        return response;
+      } catch (error) {
+        console.error("Error creating purchase:", error);
+        throw error;
+      }
+    },
+    [registerPurchase, state.sessionId]
+  );
+
+  // Resetear el tiempo de espera
   const resetWaitTime = useCallback(() => {
     storage.remove(STORAGE_KEYS.LAST_PURCHASE);
-    setState((prev) => ({
+    setBaseState((prev) => ({
       ...prev,
-      isWaiting: false,
-      waitingTimeLeft: 0,
       lastPurchaseTime: null,
     }));
   }, []);
@@ -114,12 +174,15 @@ export const usePurchaseStore = () => {
   return {
     // Estado
     sessionId: state.sessionId,
+    sessionName: state.sessionName,
+    cornCount: state.cornCount,
     isWaiting: state.isWaiting,
     waitingTimeLeft: state.waitingTimeLeft,
     canPurchase,
 
     // Acciones
     registerPurchase,
+    createPurchase: createPurchaseAction,
     resetWaitTime,
   };
 };

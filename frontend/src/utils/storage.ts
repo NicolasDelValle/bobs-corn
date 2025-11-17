@@ -57,7 +57,10 @@ export const storage = {
 // Keys específicas para la app
 export const STORAGE_KEYS = {
   SESSION_ID: "bobscorn_session_id",
+  SESSION_NAME: "bobscorn_session_name",
+  CORN_COUNT: "bobscorn_corn_count",
   WAIT_TIME: "bobscorn_wait_time",
   LAST_PURCHASE: "bobscorn_last_purchase",
+  LAST_PURCHASED_PRODUCT: "bobscorn_last_purchased_product",
   USER_PREFERENCES: "bobscorn_preferences",
 } as const;

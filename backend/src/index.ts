@@ -9,6 +9,7 @@ import { notFoundHandler, errorHandler } from "./middleware/errorHandler";
 import { connectDatabase, disconnectDatabase } from "./lib/db";
 import { startCleanupJobs, stopCleanupJobs } from "./jobs";
 import { ConfigService } from "./services/config.service";
+import { CommonService } from "./services/common.service";
 
 try {
   validateConfig();
@@ -49,6 +50,9 @@ const startServer = async () => {
 
     // Initialize default configuration
     await ConfigService.initializeDefaults();
+
+    // Initialize default payment types
+    await CommonService.seedPaymentTypes();
 
     startCleanupJobs();
 

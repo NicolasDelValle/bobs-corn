@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import type { PaymentMethod } from '@/config/paymentMethods';
 import { motion } from 'framer-motion';
-import { PAYMENT_METHODS } from '@/config/paymentMethods';
 import { Button } from '@/components/Button/Button';
+import { usePaymentTypes } from '@/hooks/usePaymentTypes';
+import type { PaymentType } from '@/types/common.types';
 
 interface PaymentFormProps {
-  onSubmit: (data: { paymentMethod: PaymentMethod; cardDetails?: CardDetails }) => void;
+  onSubmit: (data: { paymentMethod: PaymentType; cardDetails?: CardDetails }) => void;
   isLoading?: boolean;
 }
 
@@ -17,7 +17,8 @@ interface CardDetails {
 }
 
 export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = false }) => {
-  const [selectedMethod, setSelectedMethod] = useState<PaymentMethod | null>(null);
+  const { paymentTypes, loading: loadingTypes } = usePaymentTypes();
+  const [selectedMethod, setSelectedMethod] = useState<PaymentType | null>(null);
   const [cardDetails, setCardDetails] = useState({
     number: '',
     expiry: '',
@@ -31,9 +32,25 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
 
     onSubmit({
       paymentMethod: selectedMethod,
-      ...(selectedMethod.type === 'card' ? { cardDetails } : {})
+      ...(selectedMethod.name.includes('card') ? { cardDetails } : {})
     });
   };
+
+  const isCardType = (method: PaymentType) => {
+    return method.name.includes('card') || method.name === 'credit_card' || method.name === 'debit_card';
+  };
+
+  const isDigitalType = (method: PaymentType) => {
+    return ['paypal', 'apple_pay', 'google_pay'].includes(method.name);
+  };
+
+  if (loadingTypes) {
+    return (
+      <div className="flex justify-center py-8">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-green-600"></div>
+      </div>
+    );
+  }
 
   return (
     <motion.form
@@ -49,7 +66,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
           Método de Pago
         </h3>
         <div className="grid gap-3">
-          {PAYMENT_METHODS.map((method) => (
+          {paymentTypes.map((method) => (
             <motion.button
               key={method.id}
               type="button"
@@ -62,14 +79,14 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
                 }`}
             >
               <span className="text-2xl">{method.icon}</span>
-              <span className="font-medium">{method.name}</span>
+              <span className="font-medium">{method.displayName}</span>
             </motion.button>
           ))}
         </div>
       </div>
 
       {/* Formulario de tarjeta */}
-      {selectedMethod?.type === 'card' && (
+      {selectedMethod && isCardType(selectedMethod) && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -117,7 +134,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
       )}
 
       {/* Información para otros métodos */}
-      {selectedMethod?.type === 'digital' && (
+      {selectedMethod && isDigitalType(selectedMethod) && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -125,12 +142,12 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
           className="p-4 bg-blue-50 rounded-lg"
         >
           <p className="text-sm text-blue-700">
-            Serás redirigido a {selectedMethod.name} para completar el pago.
+            Serás redirigido a {selectedMethod.displayName} para completar el pago.
           </p>
         </motion.div>
       )}
 
-      {selectedMethod?.type === 'cash' && (
+      {selectedMethod && selectedMethod.name === 'bank_transfer' && (
         <motion.div
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
@@ -138,7 +155,7 @@ export const PaymentForm: React.FC<PaymentFormProps> = ({ onSubmit, isLoading = 
           className="p-4 bg-green-50 rounded-lg"
         >
           <p className="text-sm text-green-700">
-            Podrás pagar en efectivo al momento de la entrega.
+            Te enviaremos los datos bancarios para realizar la transferencia.
           </p>
         </motion.div>
       )}

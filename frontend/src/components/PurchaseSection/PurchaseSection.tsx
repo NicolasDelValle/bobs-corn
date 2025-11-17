@@ -1,10 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { APP_CONFIG } from '@/config/app';
-import type { PaymentMethod } from '@/config/paymentMethods';
+import type { PaymentType } from '@/types/common.types';
+import type { Product } from '@/services/productApiService';
 import { Accordion } from '@/components/Accordion/Accordion';
 import { PaymentForm } from '@/components/PaymentForm/PaymentForm';
 import { PurchaseSuccess } from '@/components/PurchaseSuccess/PurchaseSuccess';
+import { ShoppingBasket } from 'lucide-react';
 
 interface PurchaseSectionProps {
   isAccordionOpen: boolean;
@@ -14,7 +16,8 @@ interface PurchaseSectionProps {
   isWaiting: boolean;
   waitingTimeLeft: number;
   formatTime: (seconds: number) => string;
-  onPurchase: (data: { paymentMethod: PaymentMethod; cardDetails?: unknown }) => Promise<void>;
+  onPurchase: (data: { paymentMethod: PaymentType; cardDetails?: unknown }) => Promise<void>;
+  selectedProduct?: Product;
 }
 
 export const PurchaseSection: React.FC<PurchaseSectionProps> = ({
@@ -25,8 +28,15 @@ export const PurchaseSection: React.FC<PurchaseSectionProps> = ({
   isWaiting,
   waitingTimeLeft,
   formatTime,
-  onPurchase
+  onPurchase,
+  selectedProduct,
 }) => {
+  // Usar producto seleccionado o fallback a configuración estática
+  const displayProduct = selectedProduct || {
+    name: APP_CONFIG.product.name,
+    price: APP_CONFIG.product.price,
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, x: 20 }}
@@ -42,11 +52,18 @@ export const PurchaseSection: React.FC<PurchaseSectionProps> = ({
           trigger={
             <div className="flex items-center justify-between w-full">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🛒</span>
+                <ShoppingBasket width={24} />
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800">
-                    {isWaiting ? 'Compra Realizada' : 'Comprar Choclo'}
-                  </h3>
+                  <div className='flex flex-col items-start'>
+                    <h3 className="text-lg font-semibold text-green-800">
+                      {selectedProduct && (
+                        selectedProduct.name
+                      )}
+                    </h3>
+                    <p className="text-sm text-gray-600/80 ">
+                      {isWaiting ? 'Compra Realizada' : 'Comprar Choclo'}
+                    </p>
+                  </div>
                   {isWaiting && (
                     <p className="text-sm text-orange-600">
                       Próxima compra en: {formatTime(waitingTimeLeft)}
@@ -59,8 +76,8 @@ export const PurchaseSection: React.FC<PurchaseSectionProps> = ({
                   )}
                 </div>
               </div>
-              <div className="text-lg font-bold text-green-600">
-                ${APP_CONFIG.product.price}
+              <div className="text-lg font-bold text-xl text-green-600">
+                ${displayProduct.price.toFixed(2)}
               </div>
             </div>
           }

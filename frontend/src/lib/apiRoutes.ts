@@ -13,20 +13,15 @@ export const apiRoutes = {
     detail: (id: string) => `${API_BASE}/api/purchases/${id}`,
     create: `${API_BASE}/api/purchases`,
     update: (id: string) => `${API_BASE}/api/purchases/${id}`,
-    delete: (id: string) => `${API_BASE}/api/purchases/${id}`,
   },
-  products: {
-    list: `${API_BASE}/api/products`,
-    detail: (id: string) => `${API_BASE}/api/products/${id}`,
-    create: `${API_BASE}/api/products`,
-    update: (id: string) => `${API_BASE}/api/products/${id}`,
-    delete: (id: string) => `${API_BASE}/api/products/${id}`,
-  },
-  users: {
-    list: `${API_BASE}/api/users`,
-    detail: (id: string) => `${API_BASE}/api/users/${id}`,
-    create: `${API_BASE}/api/users`,
-    update: (id: string) => `${API_BASE}/api/users/${id}`,
-    delete: (id: string) => `${API_BASE}/api/users/${id}`,
+  common: {
+    purchaseWaitTime: `${API_BASE}/api/common/purchase-wait-time`,
+    paymentTypes: {
+      list: `${API_BASE}/api/common/payment-types`,
+      create: `${API_BASE}/api/common/payment-types`,
+      update: (id: string) => `${API_BASE}/api/common/payment-types/${id}`,
+      delete: (id: string) => `${API_BASE}/api/common/payment-types/${id}`,
+      seed: `${API_BASE}/api/common/seed-payment-types`,
+    },
   },
 };
