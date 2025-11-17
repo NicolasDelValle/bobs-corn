@@ -37,10 +37,14 @@ export const testPaymentMethod = {
 export async function createTestPurchase(
   app: Express,
   sessionId: string = testSessionId,
-  paymentMethod = testPaymentMethod
+  paymentMethod = testPaymentMethod,
+  productId: string = "test-product-id"
 ) {
   return request(app)
     .post("/api/purchases")
     .set("x-session-id", sessionId)
-    .send({ paymentMethod });
+    .send({
+      paymentMethod,
+      productId,
+    });
 }
