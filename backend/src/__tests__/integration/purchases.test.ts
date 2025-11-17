@@ -9,6 +9,7 @@ import {
 
 describe("Purchase Endpoints", () => {
   const app = createTestApp();
+  let testProductId: string;
 
   beforeEach(async () => {
     await prisma.config.upsert({
@@ -30,6 +31,17 @@ describe("Purchase Endpoints", () => {
         description: "Window for testing",
       },
     });
+
+    const testProduct = await prisma.product.create({
+      data: {
+        name: "Test Product",
+        description: "Product for testing",
+        price: 2.5,
+        imageUrl: "https://example.com/test.jpg",
+        order: 1,
+      },
+    });
+    testProductId = testProduct.id;
   });
 
   describe("POST /api/purchases", () => {
@@ -37,7 +49,10 @@ describe("Purchase Endpoints", () => {
       const response = await createTestRequest(app)
         .post("/api/purchases")
         .set("x-session-id", testSessionId)
-        .send({ paymentMethod: testPaymentMethod });
+        .send({
+          paymentMethod: testPaymentMethod,
+          productId: testProductId,
+        });
 
       expect(response.status).toBe(201);
       expect(response.body).toHaveProperty("id");
@@ -104,7 +119,10 @@ describe("Purchase Endpoints", () => {
       await createTestRequest(app)
         .post("/api/purchases")
         .set("x-session-id", testSessionId)
-        .send({ paymentMethod: testPaymentMethod });
+        .send({
+          paymentMethod: testPaymentMethod,
+          productId: testProductId,
+        });
     });
 
     it("should return paginated purchases", async () => {
@@ -133,7 +151,10 @@ describe("Purchase Endpoints", () => {
       const createResponse = await createTestRequest(app)
         .post("/api/purchases")
         .set("x-session-id", testSessionId)
-        .send({ paymentMethod: testPaymentMethod });
+        .send({
+          paymentMethod: testPaymentMethod,
+          productId: testProductId,
+        });
 
       const purchaseId = createResponse.body.id;
 

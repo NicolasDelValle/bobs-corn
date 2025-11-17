@@ -4,6 +4,7 @@ import { createTestApp, createTestRequest } from "../../test/helpers";
 
 describe("Rate Limit Middleware", () => {
   const app = createTestApp();
+  let testProductId: string;
 
   beforeEach(async () => {
     await prisma.config.upsert({
@@ -25,6 +26,18 @@ describe("Rate Limit Middleware", () => {
         description: "1 minute window",
       },
     });
+
+    // Create a test product
+    const testProduct = await prisma.product.create({
+      data: {
+        name: "Test Rate Limit Product",
+        description: "Product for rate limit testing",
+        price: 2.5,
+        imageUrl: "https://example.com/test.jpg",
+        order: 1,
+      },
+    });
+    testProductId = testProduct.id;
   });
 
   describe("Rate limit by client", () => {
@@ -36,6 +49,7 @@ describe("Rate Limit Middleware", () => {
         .set("x-session-id", sessionId)
         .send({
           paymentMethod: { name: "visa", identifier: "4111111111111111" },
+          productId: testProductId,
         });
 
       expect(response1.status).toBe(201);
@@ -45,6 +59,7 @@ describe("Rate Limit Middleware", () => {
         .set("x-session-id", sessionId)
         .send({
           paymentMethod: { name: "visa", identifier: "4111111111111111" },
+          productId: testProductId,
         });
 
       expect(response2.status).toBe(201);
@@ -57,6 +72,7 @@ describe("Rate Limit Middleware", () => {
             name: "mastercard",
             identifier: "5500000000000004",
           },
+          productId: testProductId,
         });
 
       expect(response3.status).toBe(429);
@@ -75,21 +91,21 @@ describe("Rate Limit Middleware", () => {
       const response1 = await createTestRequest(app)
         .post("/api/purchases")
         .set("x-session-id", "client-1")
-        .send({ paymentMethod });
+        .send({ paymentMethod, productId: testProductId });
 
       expect(response1.status).toBe(201);
 
       const response2 = await createTestRequest(app)
         .post("/api/purchases")
-        .set("x-session-id", "client-1")
-        .send({ paymentMethod });
+        .set("x-session-id", "client-2")
+        .send({ paymentMethod, productId: testProductId });
 
       expect(response2.status).toBe(201);
 
       const response3 = await createTestRequest(app)
         .post("/api/purchases")
-        .set("x-session-id", "client-2")
-        .send({ paymentMethod });
+        .set("x-session-id", "client-3")
+        .send({ paymentMethod, productId: testProductId });
 
       expect(response3.status).toBe(429);
       expect(response3.body).toHaveProperty("error", "Rate limit exceeded");
@@ -103,6 +119,7 @@ describe("Rate Limit Middleware", () => {
         .set("x-session-id", "client-1")
         .send({
           paymentMethod: { name: "visa", identifier: "4111111111111111" },
+          productId: testProductId,
         });
 
       expect(response1.status).toBe(201);
@@ -115,6 +132,7 @@ describe("Rate Limit Middleware", () => {
             name: "mastercard",
             identifier: "5500000000000004",
           },
+          productId: testProductId,
         });
 
       expect(response2.status).toBe(201);
@@ -132,17 +150,17 @@ describe("Rate Limit Middleware", () => {
       await createTestRequest(app)
         .post("/api/purchases")
         .set("x-session-id", sessionId)
-        .send({ paymentMethod });
+        .send({ paymentMethod, productId: testProductId });
 
       await createTestRequest(app)
         .post("/api/purchases")
         .set("x-session-id", sessionId)
-        .send({ paymentMethod });
+        .send({ paymentMethod, productId: testProductId });
 
       const response = await createTestRequest(app)
         .post("/api/purchases")
         .set("x-session-id", sessionId)
-        .send({ paymentMethod });
+        .send({ paymentMethod, productId: testProductId });
 
       expect(response.status).toBe(429);
       expect(response.body).toHaveProperty("error", "Rate limit exceeded");

@@ -1,63 +1,49 @@
-# ===========================
-# Frontend Dockerfile
-# Vite + React + TypeScript
-# ===========================
+# Development stage
+FROM node:22-alpine AS development
 
-# Base image
-FROM node:22-alpine AS base
+WORKDIR /app
+
+# Install dependencies first for better caching
+COPY package*.json ./
+RUN npm ci
+
+# Copy source code
+COPY . .
+
+# Expose port
+EXPOSE 5173
+
+# Start development server with hot reload
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+
+# Production build stage
+FROM node:22-alpine AS builder
+
 WORKDIR /app
 
 # Copy package files
 COPY package*.json ./
 
-# ===========================
-# Development stage
-# ===========================
-FROM base AS development
-
-# Install all dependencies
-RUN npm install
-
-# Copy application code
-COPY . .
-
-# Expose Vite dev server port
-EXPOSE 5173
-
-# Development command with host binding for Docker
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
-
-# ===========================
-# Build stage
-# ===========================
-FROM base AS build
-
-# Install all dependencies
+# Install dependencies
 RUN npm ci
 
-# Copy application code
+# Copy source code
 COPY . .
 
 # Build the application
 RUN npm run build
 
-# ===========================
-# Production stage (Nginx)
-# ===========================
+# Production stage
 FROM nginx:alpine AS production
 
-# Copy custom nginx config (optional)
-# COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy built app from builder stage
+COPY --from=builder /app/dist /usr/share/nginx/html
 
-# Copy built files from build stage
-COPY --from=build /app/dist /usr/share/nginx/html
+# Copy nginx configuration if needed
+# COPY nginx.conf /etc/nginx/nginx.conf
 
-# Expose port
+# Expose port 80
 EXPOSE 80
-
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s \
-  CMD wget --quiet --tries=1 --spider http://localhost/ || exit 1
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]

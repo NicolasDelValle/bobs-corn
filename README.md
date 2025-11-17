@@ -60,6 +60,8 @@ docker-compose up
 | **Backend only** | `docker-compose up backend` |
 | **Frontend only** | `docker-compose up frontend` |
 | **Database only** | `docker-compose up -d postgres` |
+| **Reinstall Frontend deps** | `docker-compose exec frontend npm install` |
+| **Reinstall Backend deps** | `docker-compose exec backend npm install` |
 
 ## Database (Prisma)
 

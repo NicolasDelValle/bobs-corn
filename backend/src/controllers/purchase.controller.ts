@@ -17,6 +17,7 @@ export const getPurchases = async (req: Request, res: Response) => {
         include: {
           client: true,
           paymentMethod: true,
+          product: true,
         },
       }),
       prisma.purchase.count(),
@@ -54,6 +55,7 @@ export const getPurchaseById = async (req: Request, res: Response) => {
       include: {
         client: true,
         paymentMethod: true,
+        product: true,
       },
     });
 
@@ -70,9 +72,9 @@ export const getPurchaseById = async (req: Request, res: Response) => {
 
 export const createPurchase = async (req: Request, res: Response) => {
   try {
-    // Client and paymentMethod are attached by rateLimiter middleware
     const client = (req as any).client;
     const paymentMethod = (req as any).paymentMethod;
+    const { productId } = req.body;
 
     if (!client) {
       return res.status(400).json({
@@ -88,14 +90,34 @@ export const createPurchase = async (req: Request, res: Response) => {
       });
     }
 
+    if (!productId) {
+      return res.status(400).json({
+        error: "Product ID is required",
+        message: "Please specify which product to purchase",
+      });
+    }
+
+    const product = await prisma.product.findUnique({
+      where: { id: productId },
+    });
+
+    if (!product) {
+      return res.status(404).json({
+        error: "Product not found",
+        message: "The specified product does not exist",
+      });
+    }
+
     const purchase = await prisma.purchase.create({
       data: {
         clientId: client.id,
         paymentMethodId: paymentMethod.id,
+        productId: productId,
       },
       include: {
         client: true,
         paymentMethod: true,
+        product: true,
       },
     });
 

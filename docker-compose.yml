@@ -31,6 +31,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
       target: development
+      no_cache: true
     container_name: bobs-corn-api
     env_file:
       - ./backend/.env.development
@@ -64,6 +65,7 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules
+      - /app/dist
     depends_on:
       - backend
     networks:
@@ -71,6 +73,9 @@ services:
     restart: unless-stopped
     stdin_open: true
     tty: true
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+      - WATCHPACK_POLLING=true
 
 volumes:
   postgres_data:

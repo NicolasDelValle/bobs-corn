@@ -1,11 +1,43 @@
 # Bob's Corn Frontend 🌽
 
-React + TypeScript + Vite application.
+Modern React + TypeScript + Vite application siguiendo las mejores prácticas 2025.
 
-## Stack
+## 🚀 Stack Tecnológico
 
 - **Runtime:** Node.js 22
-- **Language:** TypeScript 5.6
+- **Language:** TypeScript 5.9 (strict mode)
+- **Framework:** React 19 (con JSX automático)
+- **Build Tool:** Vite 7 (ESM + HMR)
+- **Linting:** ESLint 9 (flat config)
+
+## 📁 Estructura del Proyecto
+
+```
+frontend/
+├── src/
+│   ├── components/          # Componentes reutilizables
+│   ├── hooks/              # Custom React hooks
+│   ├── services/           # API client y utilidades
+│   ├── types/              # Definiciones TypeScript globales
+│   └── index.css           # Estilos globales
+├── vite.config.ts          # Configuración Vite
+└── Dockerfile              # Docker config
+```
+
+## 🔧 Scripts Principales
+
+| Script | Descripción |
+|--------|-------------|
+| `npm run dev` | Servidor desarrollo con HMR |
+| `npm run build` | Build para producción |
+| `npm run lint` | Linting con ESLint |
+
+---
+
+**¡Frontend configurado con las mejores prácticas 2025! 🎉**
+
+- **Runtime:** Node.js 22
+- **Language:** TypeScript 5.9
 - **Framework:** React 19
 - **Build Tool:** Vite 7
 - **Linter:** ESLint
@@ -55,7 +87,6 @@ See `.env.example` for all available variables.
 
 All environment variables must be prefixed with `VITE_` to be accessible in the code.
 
-
 ## API Connection
 
 The frontend connects to the backend using the `VITE_API_URL` environment variable:
@@ -102,118 +133,17 @@ The production container:
 - Static files served by nginx
 - Lightweight nginx:alpine base image
 
-## Production Deployment
+## Expanding the ESLint configuration
 
-1. Set environment variables in `.env.production`:
-   ```bash
-   VITE_API_URL=https://api.example.com
-   ```
-
-2. Build the application:
-   ```bash
-   npm run build
-   ```
-
-3. The compiled files will be in `/dist` and can be served by any static server
-
-Or use Docker:
-```bash
-docker-compose -f docker-compose.prod.yml up -d frontend
-```
-
-## Build Configuration
-
-Build settings in `vite.config.ts`:
-
-- Automatic minification
-- Code splitting
-- Asset optimization
-- Source maps for debugging
-
-## ESLint Configuration
-
-The project uses the recommended ESLint configuration for React + TypeScript.
-
-To enable stricter type-aware rules:
+If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
 
 ```js
 // eslint.config.js
 import tseslint from 'typescript-eslint'
 
-export default defineConfig([
+export default tseslint.config(
   {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      tseslint.configs.recommendedTypeChecked,
-      // Or for stricter rules:
-      // tseslint.configs.strictTypeChecked,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-    },
-  },
-])
-```
-
-## Adding New Features
-
-### 1. Create Component
-
-```tsx
-// src/components/Example.tsx
-interface ExampleProps {
-  title: string;
-}
-
-export const Example = ({ title }: ExampleProps) => {
-  return <div>{title}</div>;
-};
-```
-
-### 2. Use in App
-
-```tsx
-import { Example } from './components/Example';
-
-function App() {
-  return <Example title="Hello" />;
-}
-```
-
-### 3. Add Styles
-
-```css
-/* src/components/Example.css */
-.example {
-  padding: 1rem;
-}
-```
-
-## Debugging
-
-### Enable Debug Mode
-
-Check browser console for errors and warnings.
-
-### Vite Dev Server
-
-The dev server runs on `http://localhost:5173` with:
-- Hot Module Replacement (HMR)
-- Fast refresh for React components
-- Instant server start
-
-### Docker Logs
-
-```bash
-# View logs
-docker-compose logs frontend -f
-
-# Access container
-docker-compose exec frontend sh
-
-# Check environment
-docker-compose exec frontend env
+    extends: [tseslint.configs.recommended]
+  }
+)
 ```

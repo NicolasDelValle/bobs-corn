@@ -1,5 +1,9 @@
+import { config as loadEnv } from "dotenv";
 import { PrismaClient } from "../generated/prisma/client";
 import { createHash } from "crypto";
+import bcrypt from "bcryptjs";
+
+loadEnv();
 
 const prisma = new PrismaClient();
 
@@ -13,8 +17,31 @@ function extractLastFourDigits(identifier: string): string | null {
   return cleaned.slice(-4);
 }
 
+async function hashPassword(password: string): Promise<string> {
+  const saltRounds = 12;
+  return bcrypt.hash(password, saltRounds);
+}
+
 async function main() {
   console.log("Starting seed with test data...\n");
+
+  console.log("Creating default user...");
+
+  const defaultUser = await prisma.user.upsert({
+    where: {
+      email: "admin@bobscorn.com",
+    },
+    update: {},
+    create: {
+      email: "admin@bobscorn.com",
+      password: await hashPassword("admin123"),
+      name: "Admin User",
+    },
+  });
+
+  console.log(`  ✅ Admin user created: ${defaultUser.email}`);
+  console.log(`  📧 Login: admin@bobscorn.com`);
+  console.log(`  🔑 Password: admin123\n`);
 
   console.log("Seeding configurations...");
 
@@ -34,6 +61,16 @@ async function main() {
       key: "session_max_age_hours",
       value: "24",
       description: "Maximum duration of a client session in hours",
+    },
+    {
+      key: "jwt.access_token_minutes",
+      value: "60",
+      description: "Duración del access token en minutos",
+    },
+    {
+      key: "jwt.refresh_token_days",
+      value: "7",
+      description: "Duración del refresh token en días",
     },
   ];
 
@@ -105,6 +142,57 @@ async function main() {
     clients.push(client);
   }
 
+  console.log("\nCreating products...");
+
+  const products = [
+    {
+      name: "Choclo Clásico",
+      description:
+        "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+      price: 2.5,
+      imageUrl:
+        "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+      order: 1,
+    },
+    {
+      name: "Choclo Ceroso",
+      description:
+        "Choclo de variedad cerosa, naturalmente dulce y con textura cremosa ideal para acompañar",
+      price: 3.0,
+      imageUrl:
+        "https://st.depositphotos.com/1000503/1364/i/450/depositphotos_13640368-stock-photo-mini-blue-corn.jpg",
+      order: 2,
+    },
+    {
+      name: "Choclo Opaco",
+      description:
+        "Choclo de variedad opaca con textura firme y sabor intenso, perfecto para preparaciones tradicionales",
+      price: 3.2,
+      imageUrl:
+        "https://st3.depositphotos.com/12603566/16592/i/450/depositphotos_165921510-stock-photo-fresh-white-corns-on-wooden.jpg",
+      order: 3,
+    },
+    {
+      name: "Baby Choclo",
+      description:
+        "Choclos tiernos cosechados temprano, de tamaño pequeño y sabor delicado, perfectos para ensaladas y platos gourmet",
+      price: 2.8,
+      imageUrl:
+        "https://st2.depositphotos.com/1000605/6532/i/450/depositphotos_65322329-stock-photo-baby-corn.jpg",
+      order: 4,
+    },
+  ];
+
+  const createdProducts = [];
+  for (const productData of products) {
+    const product = await prisma.product.create({
+      data: productData,
+    });
+    createdProducts.push(product);
+  }
+
+  console.log(`Created ${products.length} products`);
+
   console.log("\nCreating test purchases...");
 
   if (!clients[0] || !clients[1] || !clients[2]) {
@@ -124,6 +212,9 @@ async function main() {
       data: {
         clientId: clients[0].id,
         paymentMethodId: paymentMethod.id,
+        productId:
+          createdProducts[i % createdProducts.length]?.id ||
+          createdProducts[0]?.id!,
         purchasedAt: new Date(Date.now() - i * 2 * 60 * 60 * 1000),
       },
     });
@@ -139,6 +230,9 @@ async function main() {
       data: {
         clientId: clients[1].id,
         paymentMethodId: paymentMethod.id,
+        productId:
+          createdProducts[i % createdProducts.length]?.id ||
+          createdProducts[0]?.id!,
         purchasedAt: new Date(Date.now() - i * 3 * 60 * 60 * 1000),
       },
     });
@@ -151,6 +245,7 @@ async function main() {
       data: {
         clientId: clients[2].id,
         paymentMethodId: firstPaymentMethod.id,
+        productId: createdProducts[0]?.id!,
       },
     });
     console.log(`Charlie: 1 purchase`);
