@@ -3,7 +3,7 @@ import type { RateLimitConfig } from "../types/rateLimit.types";
 
 let cachedConfig: RateLimitConfig | null = null;
 let lastConfigFetch = 0;
-const CONFIG_CACHE_TTL = 60000; // 1 minuto
+const CONFIG_CACHE_TTL = 60000;
 
 export async function getRateLimitConfig(): Promise<RateLimitConfig> {
   const now = Date.now();
