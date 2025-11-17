@@ -152,7 +152,6 @@ export const usePurchaseStore = () => {
 
         return response;
       } catch (error) {
-        console.error("Error creating purchase:", error);
         throw error;
       }
     },

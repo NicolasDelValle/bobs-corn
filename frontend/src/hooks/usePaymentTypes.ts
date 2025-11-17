@@ -14,9 +14,7 @@ export const usePaymentTypes = () => {
       const types = await getPaymentTypes();
       setPaymentTypes(types);
     } catch (err) {
-      console.error("Error fetching payment types:", err);
-      setError("Error al cargar métodos de pago");
-      // Fallback a datos mockeados si hay error
+      setError("Error al cargar metodos de pago");
       setPaymentTypes([
         {
           id: "mock-1",

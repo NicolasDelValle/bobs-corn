@@ -27,7 +27,6 @@ export const useProducts = (): UseProductsReturn => {
       const fetchedProducts = await ProductApiService.getAllProducts();
       setProducts(fetchedProducts);
     } catch (err) {
-      console.error("Error fetching products:", err);
       setError(err instanceof Error ? err.message : "Error desconocido");
     } finally {
       setLoading(false);
@@ -45,8 +44,7 @@ export const useProducts = (): UseProductsReturn => {
           prev.map((product) => (product.id === id ? updatedProduct : product))
         );
       } catch (err) {
-        console.error("Error updating product:", err);
-        throw err; // Re-throw para que el componente pueda manejar el error
+        throw err;
       }
     },
     []

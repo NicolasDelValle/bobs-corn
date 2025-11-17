@@ -13,9 +13,7 @@ export const usePurchaseWaitTime = () => {
       const time = await getPurchaseWaitTime();
       setWaitTime(time);
     } catch (err) {
-      console.error("Error fetching wait time:", err);
-      setError("Error al obtener tiempo de espera");
-      // Mantener valor por defecto si hay error
+      setError("Error al obtener tiempo de esperra");
       setWaitTime(5);
     } finally {
       setLoading(false);

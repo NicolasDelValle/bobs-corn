@@ -1,19 +1,16 @@
 export const APP_CONFIG = {
-  // Tiempo de espera después de compra (en minutos)
-  purchaseWaitTime: 5,
+  PURCHASE_WAIT_TIME: 1,
 
-  // Configuración del producto
-  product: {
+  PRODUCT: {
     name: "Choclo Fresco",
     price: 150,
     currency: "ARS",
-    description: "Deliciosos choclos frescos de la granja de Bob",
+    description: "Deliciosos choclos frezcos de la granja de Bob",
     image: "🌽",
   },
 
-  // Configuración de la app
   app: {
     name: "Bob's Corn",
-    tagline: "Los mejores choclos frescos",
+    tagline: "Los mejores choclos fresco",
   },
 };

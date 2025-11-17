@@ -37,15 +37,12 @@ export class ProductApiService {
         throw new Error("Error obteniendo productos");
       }
     } catch (error) {
-      console.error("Error in getAllProducts:", error);
-
-      // Fallback a productos de ejemplo si falla la API
       return [
         {
           id: "1",
           name: "Choclo Clásico",
           description:
-            "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+            "El choclo tradicional de Bob's Corn con mantequilla y sal marinna",
           price: 2.5,
           imageUrl:
             "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
@@ -114,7 +111,6 @@ export class ProductApiService {
         throw new Error("Error actualizando producto");
       }
     } catch (error) {
-      console.error("Error in updateProduct:", error);
       throw error;
     }
   }

@@ -1,10 +1,8 @@
 import { storage } from "@/utils/storage";
 
-// Configuración base de la API
 const API_BASE_URL =
   import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
-// Función base para hacer fetch con headers personalizados
 const baseFetch = async (
   endpoint: string,
   options: RequestInit = {}
@@ -17,12 +15,10 @@ const baseFetch = async (
     ...(options.headers as Record<string, string>),
   };
 
-  // Agregar session ID si existe
   if (sessionId && typeof sessionId === "string") {
     headers["x-session-id"] = sessionId;
   }
 
-  // Agregar token de autorización si existe
   if (token && typeof token === "string") {
     headers["Authorization"] = `Bearer ${token}`;
   }
@@ -34,18 +30,13 @@ const baseFetch = async (
 
   const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
 
-  // Manejar errores de autenticación
   if (response.status === 401) {
-    // Token expirado o inválido
-    localStorage.removeItem("authToken");
-    // Opcional: redirigir a login
-    // window.location.href = '/login';
+    storage.remove("authToken");
   }
 
   return response;
 };
 
-// Función para GET requests
 export const apiGet = async <T>(endpoint: string): Promise<T> => {
   const response = await baseFetch(endpoint, {
     method: "GET",
@@ -58,7 +49,6 @@ export const apiGet = async <T>(endpoint: string): Promise<T> => {
   return response.json();
 };
 
-// Función para POST requests
 export const apiPost = async <T>(
   endpoint: string,
   data?: unknown
@@ -75,7 +65,6 @@ export const apiPost = async <T>(
   return response.json();
 };
 
-// Función para PUT requests
 export const apiPut = async <T>(
   endpoint: string,
   data?: unknown
@@ -92,7 +81,6 @@ export const apiPut = async <T>(
   return response.json();
 };
 
-// Función para DELETE requests
 export const apiDelete = async <T>(endpoint: string): Promise<T> => {
   const response = await baseFetch(endpoint, {
     method: "DELETE",
@@ -105,7 +93,6 @@ export const apiDelete = async <T>(endpoint: string): Promise<T> => {
   return response.json();
 };
 
-// Función para autenticación
 export const setAuthToken = (token: string): void => {
   storage.set("authToken", token);
 };
