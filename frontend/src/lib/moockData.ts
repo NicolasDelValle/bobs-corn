@@ -1,0 +1,98 @@
+export const products = [
+  {
+    id: "0b82efaf-5b95-4d41-a688-87520a5db97c",
+    name: "Choclo Clásico",
+    description:
+      "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+    price: 2.5,
+    imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    isEnabled: true,
+    order: 1,
+    createdAt: "2025-11-17T09:28:23.558Z",
+    updatedAt: "2025-11-17T09:28:23.558Z",
+  },
+  {
+    id: "f92548f2-d3cf-48cf-b4ab-61a721b36290",
+    name: "Choclo Clásico",
+    description:
+      "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+    price: 2.5,
+    imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    isEnabled: true,
+    order: 1,
+    createdAt: "2025-11-27T04:29:27.675Z",
+    updatedAt: "2025-11-27T04:29:27.675Z",
+  },
+  {
+    id: "be8c6904-1c14-4e8b-a062-415623d05c73",
+    name: "Choclo Clásico",
+    description:
+      "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+    price: 2.5,
+    imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    isEnabled: true,
+    order: 1,
+    createdAt: "2025-11-27T05:27:03.693Z",
+    updatedAt: "2025-11-27T05:27:03.693Z",
+  },
+  {
+    id: "edcaa0c6-49bd-4371-885e-6ebe67c4e9d9",
+    name: "Choclo Clásico",
+    description:
+      "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+    price: 2.5,
+    imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    isEnabled: true,
+    order: 1,
+    createdAt: "2025-11-28T19:43:59.772Z",
+    updatedAt: "2025-11-28T19:43:59.772Z",
+  },
+  {
+    id: "afa820e2-75b7-4447-a5ae-3b4616c8ea4f",
+    name: "Choclo Clásico",
+    description:
+      "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+    price: 2.5,
+    imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    isEnabled: true,
+    order: 1,
+    createdAt: "2025-11-28T22:37:02.412Z",
+    updatedAt: "2025-11-28T22:37:02.412Z",
+  },
+  {
+    id: "ca5f6d49-5465-49e8-9c6a-4a974c62e81d",
+    name: "Choclo Clásico",
+    description:
+      "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+    price: 2.5,
+    imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    isEnabled: true,
+    order: 1,
+    createdAt: "2025-11-30T17:15:19.408Z",
+    updatedAt: "2025-11-30T17:15:19.408Z",
+  },
+  {
+    id: "2e6d48fb-6b61-48de-b4b5-98b78267eb04",
+    name: "Choclo Clásico",
+    description:
+      "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+    price: 2.5,
+    imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    isEnabled: true,
+    order: 1,
+    createdAt: "2025-11-30T19:05:43.006Z",
+    updatedAt: "2025-11-30T19:05:43.006Z",
+  },
+  {
+    id: "8b4119cc-45b3-4ef7-b036-e5af58d334cb",
+    name: "Choclo Clásico",
+    description:
+      "El choclo tradicional de Bob's Corn con mantequilla y sal marina",
+    price: 2.5,
+    imageUrl: "https://images.unsplash.com/photo-1551754655-cd27e38d2076?w=400",
+    isEnabled: true,
+    order: 1,
+    createdAt: "2025-11-30T20:57:54.750Z",
+    updatedAt: "2025-11-30T20:57:54.750Z",
+  },
+];

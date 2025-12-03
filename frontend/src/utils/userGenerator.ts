@@ -1,4 +1,4 @@
-import { ANIMALS, SESSION_TYPES, ADJECTIVES } from "./const";
+import { ANIMALS, SESSION_TYPES, ADJECTIVES } from "@/lib/userGeneratorConst";
 
 export const generateSessionName = (): string => {
   const randomAnimal = ANIMALS[Math.floor(Math.random() * ANIMALS.length)];
@@ -27,15 +27,4 @@ export const generateAnimalSessionId = (): string => {
 
 export const getUsernameFromSessionId = (sessionId: string): string => {
   return sessionId.split("_")[0] || sessionId;
-};
-
-export const generateUserStats = (cornCount: number) => {
-  const level = Math.floor(cornCount / 10) + 1;
-
-  return {
-    totalCorn: cornCount,
-    level,
-    nextLevelProgress: cornCount % 10,
-    nextLevelTarget: 10,
-  };
 };

@@ -1,14 +1,12 @@
 import { storage } from "@/utils/storage";
-
-const API_BASE_URL =
-  import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+import { STORAGE_KEYS } from "@/lib/const";
 
 const baseFetch = async (
   endpoint: string,
   options: RequestInit = {}
 ): Promise<Response> => {
-  const sessionId = storage.get("bobscorn_session_id");
-  const token = storage.get("authToken");
+  const sessionId = storage.get(STORAGE_KEYS.SESSION_ID);
+  const token = storage.get(STORAGE_KEYS.AUTH_TOKEN);
 
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -28,10 +26,10 @@ const baseFetch = async (
     headers,
   };
 
-  const response = await fetch(`${API_BASE_URL}${endpoint}`, config);
+  const response = await fetch(`${endpoint}`, config);
 
   if (response.status === 401) {
-    storage.remove("authToken");
+    storage.remove(STORAGE_KEYS.AUTH_TOKEN);
   }
 
   return response;
@@ -94,13 +92,13 @@ export const apiDelete = async <T>(endpoint: string): Promise<T> => {
 };
 
 export const setAuthToken = (token: string): void => {
-  storage.set("authToken", token);
+  storage.set(STORAGE_KEYS.AUTH_TOKEN, token);
 };
 
 export const clearAuthToken = (): void => {
-  storage.remove("authToken");
+  storage.remove(STORAGE_KEYS.AUTH_TOKEN);
 };
 
 export const getAuthToken = (): string | null => {
-  return storage.get("authToken");
+  return storage.get(STORAGE_KEYS.AUTH_TOKEN);
 };

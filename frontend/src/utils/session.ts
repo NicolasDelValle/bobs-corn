@@ -16,9 +16,10 @@ export const formatTime = (seconds: number): string => {
 
 export const calculateRemainingTime = (
   startTime: number,
-  durationMinutes: number
+  durationMinutes: number,
+  currentTime: number = Date.now() // ✅ Parámetro opcional
 ): number => {
-  const elapsed = Date.now() - startTime;
+  const elapsed = currentTime - startTime;
   const totalMs = durationMinutes * 60 * 1000;
   const remaining = Math.max(0, totalMs - elapsed);
   return Math.floor(remaining / 1000);
@@ -26,9 +27,10 @@ export const calculateRemainingTime = (
 
 export const hasWaitTimeExpired = (
   startTime: number,
-  durationMinutes: number
+  durationMinutes: number,
+  currentTime: number = Date.now() // ✅ Parámetro opcional
 ): boolean => {
-  const elapsed = Date.now() - startTime;
+  const elapsed = currentTime - startTime;
   const totalMs = durationMinutes * 60 * 1000;
   return elapsed >= totalMs;
 };

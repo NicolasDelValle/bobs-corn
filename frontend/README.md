@@ -1,47 +1,61 @@
 # Bob's Corn Frontend 🌽
 
-Modern React + TypeScript + Vite application siguiendo las mejores prácticas 2025.
+Modern Vue 3 + TypeScript + Vite application con Context API y animaciones suaves.
 
 ## 🚀 Stack Tecnológico
 
 - **Runtime:** Node.js 22
 - **Language:** TypeScript 5.9 (strict mode)
-- **Framework:** React 19 (con JSX automático)
-- **Build Tool:** Vite 7 (ESM + HMR)
-- **Linting:** ESLint 9 (flat config)
+- **Framework:** Vue 3.5 (Composition API + script setup)
+- **Build Tool:** Vite 7.2 (ESM + HMR)
+- **Styling:** Tailwind CSS 3.4
+- **UI Components:** PrimeVue 4.5 + PrimeIcons
+- **Animations:** @vueuse/motion 3.0
+- **Routing:** Vue Router 4.6
+- **Utils:** Lucide Vue Icons, CVA, clsx
+- **Type Checking:** vue-tsc 3.1
 
 ## 📁 Estructura del Proyecto
 
 ```
 frontend/
 ├── src/
-│   ├── components/          # Componentes reutilizables
-│   ├── hooks/              # Custom React hooks
-│   ├── services/           # API client y utilidades
-│   ├── types/              # Definiciones TypeScript globales
-│   └── index.css           # Estilos globales
-├── vite.config.ts          # Configuración Vite
-└── Dockerfile              # Docker config
+│   ├── components/         # Componentes reutilizables
+│   │   ├── Commons/        # Componentes base comunes
+│   │   ├── Forms/          # Formularios y validaciones  
+│   │   ├── Layouts/        # Layouts de página
+│   │   ├── Modals/         # Modales y overlays
+│   │   ├── NavBar/         # Navegación
+│   │   └── UserStats/      # Estadísticas de usuario
+│   ├── composables/        # Composables Vue 3
+│   ├── context/           # Context providers para estado global
+│   ├── hooks/             # Custom hooks (legacy)
+│   ├── router/            # Vue Router configuración
+│   ├── services/          # API client y utilidades
+│   ├── types/             # Definiciones TypeScript globales
+│   ├── utils/             # Utilidades y helpers
+│   ├── views/             # Páginas/vistas principales
+│   └── style.css          # Estilos globales
+├── vite.config.ts         # Configuración Vite + Vue
+└── Dockerfile             # Docker multi-stage config
 ```
 
 ## 🔧 Scripts Principales
 
 | Script | Descripción |
-|--------|-------------|
+|--------|-----------|
 | `npm run dev` | Servidor desarrollo con HMR |
-| `npm run build` | Build para producción |
-| `npm run lint` | Linting con ESLint |
+| `npm run build` | Build para producción (incluye type checking) |
+| `npm run preview` | Preview del build de producción |
 
----
+## 🎯 Características Principales
 
-**¡Frontend configurado con las mejores prácticas 2025! 🎉**
-
-- **Runtime:** Node.js 22
-- **Language:** TypeScript 5.9
-- **Framework:** React 19
-- **Build Tool:** Vite 7
-- **Linter:** ESLint
-- **Dev Tools:** Vite Dev Server, Hot Module Replacement
+- **Vue 3 Composition API:** Lógica reactiva moderna con `<script setup>`
+- **Context Pattern:** Estado global con providers reactivos 
+- **Reactive Wait Times:** Sistema de cooldowns con timers en tiempo real
+- **Smooth Animations:** Transiciones suaves con v-motion y spring physics
+- **Responsive Design:** Mobile-first con Tailwind CSS
+- **Type Safety:** TypeScript estricto en todo el proyecto
 
 ## Quick Start
 
@@ -58,9 +72,6 @@ docker-compose up frontend
 # Install dependencies
 npm install
 
-# Copy environment file
-cp .env.example .env.development
-
 # Start dev server
 npm run dev
 ```
@@ -72,78 +83,159 @@ npm run dev
 | **Development server with hot reload** | `npm run dev` |
 | **Build for production** | `npm run build` |
 | **Preview production build** | `npm run preview` |
-| **Lint with ESLint** | `npm run lint` |
 
 ## Environment Variables
 
-See `.env.example` for all available variables.
+All environment variables must be prefixed with `VITE_` to be accessible in the code.
 
 **Required:**
-- `VITE_API_URL` - Backend API URL
+- `VITE_API_URL` - Backend API URL (default: http://localhost:5000)
 
 **Available environments:**
 - `.env.development` - Development mode
 - `.env.production` - Production build
-
-All environment variables must be prefixed with `VITE_` to be accessible in the code.
 
 ## API Connection
 
 The frontend connects to the backend using the `VITE_API_URL` environment variable:
 
 ```typescript
-// src/config.ts
+// src/lib/config.ts
 export const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-// Usage in components
-fetch(`${API_URL}/api/example`)
-  .then(res => res.json())
-  .then(data => console.log(data));
+// Usage in services
+import { API_URL } from '@/lib/config';
+
+export const fetchProducts = async () => {
+  const response = await fetch(`${API_URL}/api/products`);
+  return response.json();
+};
 ```
+
+## Context Pattern Usage
+
+The app uses Vue 3 context/provider pattern for wait time management:
+
+```typescript
+// src/context/SessionContext.ts
+export function createWaitTimeProvider() {
+  const waitTime = ref<number>(1);
+  const lastPurchaseTime = ref<number | null>(null);
+  const isWaiting = computed(() => /* cooldown logic */);
+  const remainingTime = computed(() => /* countdown logic */);
+  
+  const registerPurchase = (productId: string) => {
+    // Update corn count and purchase time
+  };
+  
+  return { 
+    waitTime, 
+    isWaiting, 
+    remainingTime, 
+    lastPurchaseTime,
+    registerPurchase 
+  };
+}
+
+// Usage in components
+const { isWaiting, remainingTime, registerPurchase } = useWaitTimeContext();
+```
+
+## Key Features
+
+### 🕒 Real-time Wait System
+- Purchase cooldowns with live countdown timers
+- Automatic cleanup when wait time expires
+- Context-based reactive state management
+
+### 🎨 Smooth Animations
+- Spring-based transitions with @vueuse/motion
+- Progress bars with organic feel
+- Entrance animations for components
+
+### 📱 Responsive Design
+- Mobile-first approach with Tailwind CSS
+- Adaptive layouts and typography
+- Touch-friendly interactions
 
 ## Docker
 
 ### Development
 
 ```bash
-# Build
+# Build development image
 docker build --target development -t bobs-corn-frontend:dev .
 
-# Run
-docker run -p 5173:5173 --env-file .env.development bobs-corn-frontend:dev
+# Run with hot reload
+docker run -p 5173:5173 bobs-corn-frontend:dev
 ```
 
 The development container includes:
-- Hot reload via mounted volumes
-- Vite dev server
+- Hot reload via Vite HMR
+- Vue DevTools support
 - Port 5173 exposed
 
 ### Production
 
 ```bash
-# Build
+# Build production image
 docker build --target production -t bobs-corn-frontend:prod .
 
-# Run
+# Run optimized build
 docker run -p 80:80 bobs-corn-frontend:prod
 ```
 
 The production container:
 - Multi-stage optimized build
 - Static files served by nginx
-- Lightweight nginx:alpine base image
+- SPA routing support
+- Security headers configured
+- Asset caching optimized
 
-## Expanding the ESLint configuration
+## Vue 3 + TypeScript Best Practices
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+This project follows Vue 3 composition API patterns:
 
-```js
-// eslint.config.js
-import tseslint from 'typescript-eslint'
+```vue
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useWaitTimeContext } from '@/context/SessionContext';
+import { useSession } from '@/composables/useSession';
 
-export default tseslint.config(
-  {
-    extends: [tseslint.configs.recommended]
+// Context for reactive wait time management
+const { isWaiting, remainingTime, registerPurchase } = useWaitTimeContext();
+const { sessionId, sessionName } = useSession();
+
+// Local reactive state
+const stats = computed(() => generateUserStats(cornCount.value));
+
+// Type-safe props (when needed)
+interface Props {
+  productId: string;
+}
+const props = defineProps<Props>();
+
+// Event handlers
+const handlePurchase = () => {
+  if (!isWaiting.value) {
+    registerPurchase(props.productId);
   }
-)
+};
+</script>
+
+<template>
+  <div class="product-card">
+    <button 
+      :disabled="isWaiting" 
+      @click="handlePurchase"
+      class="btn-purchase"
+    >
+      {{ isWaiting ? `Espera ${remainingTime}s` : 'Comprar' }}
+    </button>
+  </div>
+</template>
 ```
+
+---
+
+**Frontend moderno con Vue 3, gestión reactiva de estado y animaciones suaves! 🎉**

@@ -1,13 +1,18 @@
 import { prisma } from "../lib/db";
 import type { ProductModel } from "../../generated/prisma/models";
 
+interface ProductFilters {
+  isEnabled?: boolean;
+  orderBy?: "name" | "price" | "order" | "createdAt";
+  orderDirection?: "asc" | "desc";
+  minPrice?: number;
+  maxPrice?: number;
+}
+
 export class ProductService {
   static async getAllProducts(): Promise<ProductModel[]> {
     const products = await prisma.product.findMany({
-      where: {
-        isEnabled: true,
-      },
-      orderBy: [{ order: "asc" }, { name: "asc" }],
+      orderBy: { order: "asc" },
     });
 
     return products;
