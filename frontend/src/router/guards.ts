@@ -3,7 +3,7 @@ import { useAuth } from "@/composables/useAuth";
 import { APP_ROUTES } from "./routes";
 
 export function setupGuards(router: Router) {
-  router.beforeEach((to, from, next) => {
+  router.beforeEach((to, _, next) => {
     const { isAuthenticated } = useAuth();
 
     if (to.path === APP_ROUTES.LOGIN && isAuthenticated.value) {

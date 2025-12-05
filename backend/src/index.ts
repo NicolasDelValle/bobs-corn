@@ -51,9 +51,6 @@ const startServer = async () => {
     // Initialize default configuration
     await ConfigService.initializeDefaults();
 
-    // Initialize default payment types
-    await CommonService.seedPaymentTypes();
-
     startCleanupJobs();
 
     app.listen(PORT, () => {

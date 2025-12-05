@@ -13,7 +13,6 @@ export interface ApiError {
 
 export interface BaseComponentProps {
   className?: string;
-  children?: React.ReactNode;
 }
 
 declare global {

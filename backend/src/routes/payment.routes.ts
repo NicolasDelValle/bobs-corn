@@ -8,6 +8,4 @@ router.post("/types", PaymentController.createPaymentType);
 router.put("/types/:id", PaymentController.updatePaymentType);
 router.delete("/types/:id", PaymentController.deletePaymentType);
 
-router.post("/seed-types", PaymentController.seedPaymentTypes);
-
 export default router;

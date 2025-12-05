@@ -1,20 +1,35 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 import Tabs from 'primevue/tabs';
 import TabList from 'primevue/tablist';
 import Tab from 'primevue/tab';
 import TabPanels from 'primevue/tabpanels';
 import TabPanel from 'primevue/tabpanel';
+import Button from 'primevue/button';
+import InputNumber from 'primevue/inputnumber';
 
 import { APP_CONFIG } from '@/config/app';
-import { config } from '@/config';
 import NavBar from '@/components/NavBar/NavBar.vue';
 import TabButton from '@/components/Commons/TabButton.vue';
 import ViewContainer from '@/components/Commons/ViewContainer.vue';
 import ProductsView from '@/views/ProductsView.vue';
+import { useConfig } from '@/composables/useConfig';
 
-const isLoading = ref(false);
+const { waitTime, loading, error, saving, fetchWaitTime, saveWaitTime } = useConfig();
+const tempWaitTime = ref<number>(0);
+
+const handleSaveWaitTime = async () => {
+  if (tempWaitTime.value > 0) {
+    await saveWaitTime(tempWaitTime.value);
+  }
+};
+
+onMounted(() => {
+  fetchWaitTime().then(() => {
+    tempWaitTime.value = waitTime.value;
+  });
+});
 
 </script>
 
@@ -23,7 +38,6 @@ const isLoading = ref(false);
   <div>
 
     <ViewContainer>
-      <!-- Información de configuración -->
       <div class="bg-blue-50 p-6 rounded-lg w-full">
         <h2 class="text-xl font-semibold mb-4 text-blue-800">Configuración</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -32,21 +46,21 @@ const isLoading = ref(false);
             <p class="text-blue-600">{{ APP_CONFIG.app.name }}</p>
           </div>
           <div class="bg-white p-4 rounded">
-            <p class="font-medium text-gray-700">API URL:</p>
-            <p class="text-blue-600">{{ config.api.baseUrl }}</p>
-          </div>
-          <div class="bg-white p-4 rounded">
-            <p class="font-medium text-gray-700">Product:</p>
-            <p class="text-blue-600">{{ APP_CONFIG.PRODUCT.name }} {{ APP_CONFIG.PRODUCT.image }}</p>
-          </div>
-          <div class="bg-white p-4 rounded">
-            <p class="font-medium text-gray-700">Price:</p>
-            <p class="text-blue-600">${{ APP_CONFIG.PRODUCT.price }} {{ APP_CONFIG.PRODUCT.currency }}</p>
+            <p class="font-medium text-gray-700 mb-2">Tiempo de espera entre compras (segundos):</p>
+            <div class="flex gap-2 items-center">
+              <InputNumber v-model="tempWaitTime" :min="1" :max="3600" :disabled="loading || saving" class="flex-1"
+                placeholder="Segundos" />
+              <Button @click="handleSaveWaitTime" :disabled="loading || saving || tempWaitTime <= 0" :loading="saving"
+                label="Guardar" size="small" />
+            </div>
+            <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
+            <p v-if="!loading && !error" class="text-gray-500 text-sm mt-1">
+              Tiempo actual: {{ waitTime }} segundos
+            </p>
           </div>
         </div>
       </div>
 
-      <!-- Variantes -->
       <div class="w-full">
         <Tabs value="0" style="background: transparent !important;">
           <TabList style="background: transparent !important;">
@@ -66,31 +80,18 @@ const isLoading = ref(false);
               </TabButton>
             </Tab>
           </TabList>
-          <TabPanels>
-            <TabPanel value="0">
+          <TabPanels style="background: transparent !important;">
+            <TabPanel style="background: transparent !important;" value="0">
               <ProductsView />
             </TabPanel>
-            <TabPanel value="1">
+            <TabPanel style="background: transparent !important;" value="1">
               <p class="m-0">
-                Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam
-                rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-                explicabo. Nemo enim
-                ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores
-                eos
-                qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non numquam eius modi.
+                Seccion en construcción...
               </p>
             </TabPanel>
-            <TabPanel value="2">
+            <TabPanel style="background: transparent !important;" value="2">
               <p class="m-0">
-                At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum
-                deleniti
-                atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident,
-                similique
-                sunt in culpa
-                qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est
-                et
-                expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio cumque nihil impedit quo
-                minus.
+                Seccion en construcción...
               </p>
             </TabPanel>
           </TabPanels>

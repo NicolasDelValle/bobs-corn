@@ -31,7 +31,3 @@ export const updatePaymentType = async (
 export const deletePaymentType = async (id: string): Promise<void> => {
   await apiGet<CommonApiResponse>(apiRoutes.payments.types.delete(id));
 };
-
-export const seedPaymentTypes = async (): Promise<void> => {
-  await apiPost<CommonApiResponse>(apiRoutes.payments.types.seed, {});
-};

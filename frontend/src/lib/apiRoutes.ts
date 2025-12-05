@@ -25,7 +25,6 @@ export const apiRoutes = {
       create: `${API_BASE}/payments/types`,
       update: (id: string) => `${API_BASE}/payments/types/${id}`,
       delete: (id: string) => `${API_BASE}/payments/types/${id}`,
-      seed: `${API_BASE}/payments/seed-types`,
     },
   },
   config: {

@@ -4,19 +4,19 @@ import { apiRoutes } from "@/lib/apiRoutes";
 
 export const getPurchaseWaitTime = async (): Promise<number> => {
   const response = await apiGet<CommonApiResponse>(
-    apiRoutes.common.purchaseWaitTime
+    apiRoutes.config.purchaseWaitTime
   );
   return response.waitTime || 5;
 };
 
 export const setPurchaseWaitTime = async (minutes: number): Promise<void> => {
-  await apiPut<CommonApiResponse>(apiRoutes.common.purchaseWaitTime, {
+  await apiPut<CommonApiResponse>(apiRoutes.config.purchaseWaitTime, {
     minutes,
   });
 };
 
 export const getPaymentTypes = async (): Promise<PaymentType[]> => {
-  return apiGet<PaymentType[]>(apiRoutes.common.paymentTypes.list);
+  return apiGet<PaymentType[]>(apiRoutes.payments.types.list);
 };
 
 export const createPaymentType = async (data: {
@@ -25,7 +25,7 @@ export const createPaymentType = async (data: {
   icon: string;
   order?: number;
 }): Promise<PaymentType> => {
-  return apiPost<PaymentType>(apiRoutes.common.paymentTypes.create, data);
+  return apiPost<PaymentType>(apiRoutes.payments.types.create, data);
 };
 
 export const updatePaymentType = async (
@@ -38,13 +38,9 @@ export const updatePaymentType = async (
     order?: number;
   }
 ): Promise<PaymentType> => {
-  return apiPut<PaymentType>(apiRoutes.common.paymentTypes.update(id), data);
+  return apiPut<PaymentType>(apiRoutes.payments.types.update(id), data);
 };
 
 export const deletePaymentType = async (id: string): Promise<void> => {
-  await apiGet<CommonApiResponse>(apiRoutes.common.paymentTypes.delete(id));
-};
-
-export const seedPaymentTypes = async (): Promise<void> => {
-  await apiPost<CommonApiResponse>(apiRoutes.common.paymentTypes.seed, {});
+  await apiGet<CommonApiResponse>(apiRoutes.payments.types.delete(id));
 };

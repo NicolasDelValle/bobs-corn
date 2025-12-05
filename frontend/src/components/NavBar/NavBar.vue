@@ -17,7 +17,7 @@ const router = useRouter();
 
 const menu = ref()
 
-const { isAuthenticated, user, logout } = useAuth();
+const { isAuthenticated, logout } = useAuth();
 
 const isUserAuthenticated = computed(() => isAuthenticated.value);
 

@@ -10,7 +10,7 @@ import DataView from 'primevue/dataview';
   <div class="card">
     <DataView :value="products">
       <template #list="slotProps">
-        <div class="flex flex-col">
+        <div class="flex flex-col ">
           <div v-for="(item, index) in slotProps.items" :key="index">
             <div class="flex flex-col sm:flex-row sm:items-center p-6 gap-4"
               :class="{ 'border-t border-surface-200 dark:border-surface-700': index !== 0 }">
@@ -33,10 +33,8 @@ import DataView from 'primevue/dataview';
                   </div>
                 </div>
                 <div class="flex flex-col md:items-end gap-8">
-                  <span class="text-xl font-semibold">${{ item.price }}</span>
-                  <div class="flex flex-row-reverse md:flex-row gap-2">
-                    <Button icon="pi pi-heart" variant="outlined"></Button>
-                  </div>
+                  <span class="text-2xl font-semibold">${{ item.price }}</span>
+
                 </div>
               </div>
             </div>
