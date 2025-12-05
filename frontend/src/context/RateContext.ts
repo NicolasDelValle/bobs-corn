@@ -10,7 +10,7 @@ import {
 } from "vue";
 import { storage } from "@/utils/storage";
 import { STORAGE_KEYS } from "@/lib/const";
-import { getPurchaseWaitTime } from "@/services/commonServices";
+import { getPurchaseWaitTime } from "@/services/configServices";
 import {
   getCurrentTimestamp,
   calculateRemainingTime,

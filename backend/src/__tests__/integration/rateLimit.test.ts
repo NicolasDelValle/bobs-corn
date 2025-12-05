@@ -18,10 +18,10 @@ describe("Rate Limit Middleware", () => {
     });
 
     await prisma.config.upsert({
-      where: { key: "rate_limit_window_ms" },
+      where: { key: "rate_limit_window_seconds" },
       update: { value: "60000" },
       create: {
-        key: "rate_limit_window_ms",
+        key: "rate_limit_window_seconds",
         value: "60000",
         description: "1 minute window",
       },

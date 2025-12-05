@@ -19,14 +19,16 @@ export const apiRoutes = {
     get: (id: string) => `${API_BASE}/products/${id}`,
     update: (id: string) => `${API_BASE}/products/${id}`,
   },
-  common: {
-    purchaseWaitTime: `${API_BASE}/common/purchase-wait-time`,
-    paymentTypes: {
-      list: `${API_BASE}/common/payment-types`,
-      create: `${API_BASE}/common/payment-types`,
-      update: (id: string) => `${API_BASE}/common/payment-types/${id}`,
-      delete: (id: string) => `${API_BASE}/common/payment-types/${id}`,
-      seed: `${API_BASE}/common/seed-payment-types`,
+  payments: {
+    types: {
+      list: `${API_BASE}/payments/types`,
+      create: `${API_BASE}/payments/types`,
+      update: (id: string) => `${API_BASE}/payments/types/${id}`,
+      delete: (id: string) => `${API_BASE}/payments/types/${id}`,
+      seed: `${API_BASE}/payments/seed-types`,
     },
+  },
+  config: {
+    purchaseWaitTime: `${API_BASE}/config/purchase-wait-time`,
   },
 };

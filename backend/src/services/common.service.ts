@@ -3,34 +3,32 @@ import { prisma } from "../lib/db";
 export class CommonService {
   static async getPurchaseWaitTime(): Promise<number> {
     const config = await prisma.config.findUnique({
-      where: { key: "rate_limit_window_ms" },
+      where: { key: "rate_limit_window_seconds" },
     });
 
     if (!config) {
       await prisma.config.create({
         data: {
-          key: "rate_limit_window_ms",
-          value: "300000",
-          description: "Tiempo de espera en milisegundos entre compras",
+          key: "rate_limit_window_seconds",
+          value: "60",
+          description: "Tiempo de espera en segundos entre compras",
         },
       });
       return 5;
     }
 
-    const milliseconds = parseInt(config.value, 10) || 300000;
-    return Math.round(milliseconds / 60000);
+    const seconds = parseInt(config.value, 10) || 60;
+    return Math.round(seconds);
   }
 
-  static async setPurchaseWaitTime(minutes: number): Promise<void> {
-    const milliseconds = minutes * 60000;
-
+  static async setPurchaseWaitTime(seconds: number): Promise<void> {
     await prisma.config.upsert({
-      where: { key: "rate_limit_window_ms" },
-      update: { value: milliseconds.toString() },
+      where: { key: "rate_limit_window_seconds" },
+      update: { value: seconds.toString() },
       create: {
-        key: "rate_limit_window_ms",
-        value: milliseconds.toString(),
-        description: "Tiempo de espera en milisegundos entre compras",
+        key: "rate_limit_window_seconds",
+        value: seconds.toString(),
+        description: "Tiempo de espera en segundos entre compras",
       },
     });
   }
@@ -76,39 +74,5 @@ export class CommonService {
     return prisma.paymentType.delete({
       where: { id },
     });
-  }
-
-  static async seedPaymentTypes() {
-    const existingCount = await prisma.paymentType.count();
-    if (existingCount > 0) return;
-
-    const defaultPaymentTypes = [
-      {
-        name: "credit_card",
-        displayName: "Tarjeta de Crédito",
-        icon: "💳",
-        order: 1,
-      },
-      {
-        name: "debit_card",
-        displayName: "Tarjeta de Débito",
-        icon: "🏦",
-        order: 2,
-      },
-      { name: "paypal", displayName: "PayPal", icon: "🅿️", order: 3 },
-      { name: "apple_pay", displayName: "Apple Pay", icon: "🍎", order: 4 },
-      { name: "google_pay", displayName: "Google Pay", icon: "🟢", order: 5 },
-      {
-        name: "bank_transfer",
-        displayName: "Transferencia Bancaria",
-        icon: "🏛️",
-        order: 6,
-      },
-      { name: "crypto", displayName: "Criptomonedas", icon: "₿", order: 7 },
-    ];
-
-    for (const paymentType of defaultPaymentTypes) {
-      await prisma.paymentType.create({ data: paymentType });
-    }
   }
 }

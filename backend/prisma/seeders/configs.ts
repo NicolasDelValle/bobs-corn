@@ -3,10 +3,9 @@ import { logStep, logSuccess } from "./utils";
 
 const configData = [
   {
-    key: "rate_limit_window_ms",
-    value: "60000",
-    description:
-      "Time window for rate limiting in milliseconds (60000 = 1 minute)",
+    key: "rate_limit_window_seconds",
+    value: "60",
+    description: "Time window for rate limiting in seconds (60 = 1 minute)",
   },
   {
     key: "rate_limit_max_requests",

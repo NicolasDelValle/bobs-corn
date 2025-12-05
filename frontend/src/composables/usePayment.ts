@@ -1,7 +1,7 @@
 import { ref } from "vue";
 
 import type { PaymentType } from "@/types/common";
-import { getPaymentTypes } from "@/services/commonServices";
+import { getPaymentTypes } from "@/services/paymentServices";
 
 const paymentTypes = ref<Array<PaymentType>>([]);
 const loading = ref(false);

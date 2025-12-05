@@ -13,7 +13,7 @@ export async function getRateLimitConfig(): Promise<RateLimitConfig> {
   }
 
   const [windowConfig, maxRequestsConfig] = await Promise.all([
-    prisma.config.findUnique({ where: { key: "rate_limit_window_ms" } }),
+    prisma.config.findUnique({ where: { key: "rate_limit_window_seconds" } }),
     prisma.config.findUnique({ where: { key: "rate_limit_max_requests" } }),
   ]);
 

@@ -23,11 +23,6 @@ const isUserAuthenticated = computed(() => isAuthenticated.value);
 
 const items: MenuItem[] = [
   {
-    label: 'Configuración',
-    command: () => {
-    }
-  },
-  {
     label: 'Dashboard',
     command: () => {
       router.push(APP_ROUTES.DASHBOARD);
